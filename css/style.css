@@ -1,0 +1,42 @@
+body {
+  background-color: #f2f2f2;
+}
+
+.main {
+  background-color: #c2c2d6;
+  border: 1px solid #ccc;
+  width: 30%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.container,
+.display {
+    width: 400px;
+}
+
+.display,
+.key {
+    background-color: #f5f5f6;
+    border: 1px solid #9494b8;
+}
+
+.display {
+  height: 40px;
+  margin: 0 auto;
+}
+
+.container {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 20px auto;
+}
+
+.key {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  width: 90px;
+  height: 90px;
+}
