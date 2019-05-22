@@ -21,20 +21,22 @@ h1 {
 }
 
 .container,
-.display {
+#display {
   width: 400px;
 }
 
-.display,
+#display,
 .key {
   background-color: #f5f5f6;
   border: 1px solid #9494b8;
   font-size: 1.5rem;
 }
 
-.display {
+#display {
   height: 40px;
+  text-align: right;
   margin: 0 auto;
+  padding-right: 5px;
 }
 
 .container {
