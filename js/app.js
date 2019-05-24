@@ -23,7 +23,7 @@
     data.holder.push(0);
   }
 
-  function resetInputHolder(data) {
+  function resetInputHolder() {
     data.holder.length = 0;
     data.holder.push(0);
   }
@@ -79,7 +79,13 @@
 
   // Show selected number or decimal point on display
   function displaySelectedChar(key, display) {
-    display.textContent += key;
+    console.log(display.textContent);
+    if (data.holder.length <= 1 && key === ".") {
+      key = "0.";
+      display.textContent = key;
+    } else {
+      display.textContent += key;
+    }
   }
 
   // key pressed action
@@ -145,9 +151,18 @@
     }
 
     if (key.textContent === "=") {
-      data.display.textContent = performCalc(Number(data.holder.join("")));
-      data.operator = null;
-      resetInputHolder(data);
+      if (data.operator) {
+        const total = performCalc(Number(data.holder.join("")));
+        data.display.textContent = total;
+        data.operator = null;
+        data.calcResult = 0;
+        resetInputHolder();
+        data.holder.push(total);
+      }
     }
+    console.log(data.holder);
+    console.log(data.calcResult);
+    // console.log(data.display.textContent);
+    // console.log(data.operator);
   }
 })();

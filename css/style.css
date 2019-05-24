@@ -21,7 +21,7 @@ h1 {
 
 .container,
 #display {
-  width: 400px;
+  width: 360px;
 }
 
 #display,
@@ -42,22 +42,22 @@ h1 {
   display: grid;
   grid-row-gap: 10px;
   grid-template-columns: repeat(auto-fill, 90px);
-  justify-content: space-between;
+  justify-items: center;
   margin: 20px auto;
 }
 
 .box {
-  width: 90px;
-  height: 90px;
-}
+  width: 80px;
+  height: 80px;
+  }
 
 .key {
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.07s ease;
-  width: 88px;
-  height: 88px;
+  width: 78px;
+  height: 78px;
 }
 
 .key-clicked {
