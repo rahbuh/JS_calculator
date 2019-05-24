@@ -90,7 +90,11 @@
 
   // key pressed action
   function keyPressAction(e) {
-    const key = document.querySelector(`.key[data-key="${e.key}"]`);
+    let key = "";
+    e.key === "Enter"
+      ? (key = document.querySelector(`.key[data-key="="]`))
+      : (key = document.querySelector(`.key[data-key="${e.key}"]`));
+
     if (key) {
       keyAnimation(key);
       processInput(key);
