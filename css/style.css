@@ -21,7 +21,7 @@ h1 {
 
 .container,
 #display {
-  width: 360px;
+  width: 320px;
 }
 
 #display,
@@ -40,15 +40,15 @@ h1 {
 
 .container {
   display: grid;
-  grid-row-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 90px);
-  justify-items: center;
-  margin: 20px auto;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, 70px);
+  justify-content: center;
+  margin: 20px auto 40px;
 }
 
 .box {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   }
 
 .key {
@@ -56,8 +56,8 @@ h1 {
   align-items: center;
   justify-content: center;
   transition: all 0.07s ease;
-  width: 78px;
-  height: 78px;
+  width: 68px;
+  height: 68px;
 }
 
 .key-clicked {

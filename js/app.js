@@ -79,7 +79,6 @@
 
   // Show selected number or decimal point on display
   function displaySelectedChar(key, display) {
-    console.log(display.textContent);
     if (data.holder.length <= 1 && key === ".") {
       key = "0.";
       display.textContent = key;
