@@ -103,12 +103,16 @@
     processInput(key);
   }
 
+  function parseNumber() {
+    return parseFloat(data.holder.join("").slice(1));
+  }
+
   function performOperation(fn) {
     if (!data.operator) {
-      data.calcResult += Number(data.holder.join(""));
+      data.calcResult += parseNumber();
       data.operator = createOperator(data.calcResult, fn);
     } else {
-      data.calcResult = performCalc(Number(data.holder.join("")));
+      data.calcResult = performCalc(parseNumber());
       data.operator = createOperator(data.calcResult, fn);
     }
     data.display.textContent = data.calcResult;
@@ -152,17 +156,21 @@
 
     if (key.textContent === "=") {
       if (data.operator) {
-        const total = performCalc(Number(data.holder.join("")));
-        data.display.textContent = total;
+        data.display.textContent = performCalc(parseNumber());
         data.operator = null;
         data.calcResult = 0;
         resetInputHolder();
-        data.holder.push(total);
       }
     }
-    console.log(data.holder);
-    console.log(data.calcResult);
-    // console.log(data.display.textContent);
-    // console.log(data.operator);
+
+    if (key.textContent === "back") {
+      data.holder.pop();
+      data.display.textContent = data.holder.join("").slice(1);
+    }
+
+    if (key.textContent === "+/-") {
+      data.holder[1] = String(parseFloat(data.holder[1] * -1));
+      data.display.textContent = data.holder.join("").slice(1);
+    }
   }
 })();
