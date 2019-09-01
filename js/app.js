@@ -1,38 +1,35 @@
 (function calculator() {
-  const keyList = [
+  const keysArray = [
     { keyname: "M-clear", keytext: "MC" },
     { keyname: "M-recall", keytext: "MR" },
     { keyname: "M-add", keytext: "M+" },
     { keyname: "M-sub", keytext: "M-" },
-    { keyname: "seven", keytext: 7 },
-    { keyname: "eight", keytext: 8 },
-    { keyname: "nine", keytext: 9 },
-    { keyname: "div", keytext: "/" },
-    { keyname: "four", keytext: 4 },
-    { keyname: "five", keytext: 5 },
-    { keyname: "six", keytext: 6 },
-    { keyname: "mul", keytext: "*" },
-    { keyname: "one", keytext: 1 },
-    { keyname: "two", keytext: 2 },
-    { keyname: "three", keytext: 3 },
-    { keyname: "add", keytext: "+" },
+    { keyname: 7, keytext: 7 },
+    { keyname: 8, keytext: 8 },
+    { keyname: 9, keytext: 9 },
+    { keyname: "/", keytext: "/" },
+    { keyname: 4, keytext: 4 },
+    { keyname: 5, keytext: 5 },
+    { keyname: 6, keytext: 6 },
+    { keyname: "*", keytext: "*" },
+    { keyname: 1, keytext: 1 },
+    { keyname: 2, keytext: 2 },
+    { keyname: 3, keytext: 3 },
+    { keyname: "+", keytext: "+" },
     { keyname: "neg", keytext: "+/-" },
-    { keyname: "zero", keytext: 0 },
-    { keyname: "dec", keytext: "." },
-    { keyname: "sub", keytext: "-" },
+    { keyname: 0, keytext: 0 },
+    { keyname: ".", keytext: "." },
+    { keyname: "-", keytext: "-" },
     { keyname: "Delete", keytext: "C" },
     { keyname: "Backspace", keytext: "back" },
     { keyname: "blank", keytext: "" },
-    { keyname: "equals", keytext: "=" }
+    { keyname: "Enter", keytext: "=" }
   ];
 
-  const createDisplay = keys => {
-    const display = document.querySelector("#display");
-    const container = document.createElement("div");
-    container.classList.add("container");
-    display.appendChild(container);
+  (function(keyList) {
+    const container = document.querySelector(".container");
 
-    for (let key of keys) {
+    for (let key of keyList) {
       const box = document.createElement("div");
       box.classList.add("box");
 
@@ -44,33 +41,55 @@
       box.appendChild(keyDiv);
       container.appendChild(box);
     }
-  };
+  })(keysArray);
 
-  createDisplay(keyList);
-
-  // const data = {
-  //   display: document.querySelector("#display"),
-  //   calcResult: 0,
-  //   operator: null,
-  //   holder: [0]
-  // };
-
-  // // add key press listener
-  // document.addEventListener("keyup", keyPressAction);
-
-  // add browser key click listener
+  // add mouse click event listener
   const keys = document.querySelectorAll(".key");
   keys.forEach(key => {
     key.addEventListener("click", clickAction);
   });
 
-  // // browser click action
+  // add key press event listener
+  document.addEventListener("keyup", keyPressAction);
+
+  // mouse click action
   function clickAction(e) {
     const key = e.target;
     console.log(key);
-    // keyAnimation(key);
+    keyAnimation(key);
     // processInput(key);
   }
+
+  // key pressed action
+  function keyPressAction(e) {
+    console.log(e.key);
+    let key = document.querySelector(`.key[data-key="${e.key}"]`);
+
+    if (key) {
+      keyAnimation(key);
+      // processInput(key);
+    }
+  }
+
+  // Show key animation
+  function keyAnimation(key) {
+    key.classList.add("key-clicked");
+    key.addEventListener("transitionend", removeTransition);
+  }
+
+  function removeTransition(e) {
+    if (e.propertyName !== "transform") return;
+    this.classList.remove("key-clicked");
+  }
+
+  const data = {
+    display: document.querySelector("#display"),
+    calcResult: 0,
+    operator: null,
+    holder: [0]
+  };
+
+  data.display.textContent = "0";
 
   // function init() {
   //   data.display.textContent = "0";
@@ -123,17 +142,6 @@
   //   return data.operator(num);
   // }
 
-  // // Show key pressed animation
-  // function keyAnimation(key) {
-  //   key.classList.add("key-clicked");
-  //   key.addEventListener("transitionend", removeTransition);
-  // }
-
-  // function removeTransition(e) {
-  //   if (e.propertyName !== "transform") return;
-  //   this.classList.remove("key-clicked");
-  // }
-
   // // Show selected number or decimal point on display
   // function displaySelectedChar(key, display) {
   //   if (data.holder.length <= 1 && key === ".") {
@@ -141,19 +149,6 @@
   //     display.textContent = key;
   //   } else {
   //     display.textContent += key;
-  //   }
-  // }
-
-  // // key pressed action
-  // function keyPressAction(e) {
-  //   let key = "";
-  //   e.key === "Enter"
-  //     ? (key = document.querySelector(`.key[data-key="="]`))
-  //     : (key = document.querySelector(`.key[data-key="${e.key}"]`));
-
-  //   if (key) {
-  //     keyAnimation(key);
-  //     processInput(key);
   //   }
   // }
 
