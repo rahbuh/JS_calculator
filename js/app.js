@@ -65,22 +65,23 @@
   // mouse click action
   function clickAction(e) {
     const key = e.target;
-    const input = key.getAttribute("data-key");
-    keyAnimation(key);
-    processInput(input);
+    processKeyInput(key);
   }
 
   // key pressed action
   function keyPressAction(e) {
     const key = document.querySelector(`.key[data-key="${e.key}"]`);
+    processKeyInput(key);
+  }
+
+  function processKeyInput(key) {
     if (key) {
       keyAnimation(key);
-      let input = key.getAttribute("data-key");
-      processInput(input);
+      processInput(key.getAttribute("data-key"));
     }
   }
 
-  // Show key animation
+  // Key animation
   function keyAnimation(key) {
     key.classList.add("key-clicked");
     key.addEventListener("transitionend", removeTransition);
