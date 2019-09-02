@@ -26,6 +26,16 @@
     { keyname: "Enter", keytext: "=" }
   ];
 
+  const data = {
+    display: document.querySelector("#display"),
+    calcResult: 0,
+    operator: null,
+    operand: [0],
+    operandLength: 0,
+    decimalCount: 0,
+    memory: 0
+  };
+
   (function(keyList) {
     const container = document.querySelector(".container");
 
@@ -55,19 +65,18 @@
   // mouse click action
   function clickAction(e) {
     const key = e.target;
-    console.log(key);
+    const input = key.getAttribute("data-key");
     keyAnimation(key);
-    // processInput(key);
+    processInput(input);
   }
 
   // key pressed action
   function keyPressAction(e) {
-    console.log(e.key);
-    let key = document.querySelector(`.key[data-key="${e.key}"]`);
-
+    const key = document.querySelector(`.key[data-key="${e.key}"]`);
     if (key) {
       keyAnimation(key);
-      // processInput(key);
+      let input = key.getAttribute("data-key");
+      processInput(input);
     }
   }
 
@@ -82,26 +91,24 @@
     this.classList.remove("key-clicked");
   }
 
-  const data = {
-    display: document.querySelector("#display"),
-    calcResult: 0,
-    operator: null,
-    holder: [0]
-  };
+  function reset() {
+    data.display.textContent = "0";
+    data.calcResult = 0;
+    data.operator = null;
+    data.operandLength = 0;
+    data.decimalCount = 0;
+    data.operand.length = 0;
+    data.operand.push(0);
+    console.log("Reset Complete");
+  }
 
-  data.display.textContent = "0";
+  function memoryClear() {
+    data.memory = 0;
+  }
 
-  // function init() {
-  //   data.display.textContent = "0";
-  //   data.calcResult = 0;
-  //   data.operator = null;
-  //   data.holder.length = 0;
-  //   data.holder.push(0);
-  // }
-
-  // function resetInputHolder() {
-  //   data.holder.length = 0;
-  //   data.holder.push(0);
+  // function resetOperand() {
+  //   data.operand.length = 0;
+  //   data.operand.push(0);
   // }
 
   // // Operator closure functions
@@ -142,18 +149,18 @@
   //   return data.operator(num);
   // }
 
-  // // Show selected number or decimal point on display
-  // function displaySelectedChar(key, display) {
-  //   if (data.holder.length <= 1 && key === ".") {
-  //     key = "0.";
-  //     display.textContent = key;
-  //   } else {
-  //     display.textContent += key;
-  //   }
-  // }
+  // Show selected number or decimal point on display
+  function displaySelectedChar(key, display) {
+    if (data.operand.length <= 1 && key === ".") {
+      key = "0.";
+      display.textContent = key;
+    } else {
+      display.textContent += key;
+    }
+  }
 
   // function parseNumber() {
-  //   return parseFloat(data.holder.join("").slice(1));
+  //   return parseFloat(data.operand.join("").slice(1));
   // }
 
   // function performOperation(fn) {
@@ -165,61 +172,65 @@
   //     data.operator = createOperator(data.calcResult, fn);
   //   }
   //   data.display.textContent = data.calcResult;
-  //   resetInputHolder();
+  //   resetOperand();
   // }
 
-  // function processInput(key) {
-  //   // reset
-  //   if (key.textContent === "C") {
-  //     init(data);
-  //   }
-  //   // if numeric key is pressed
-  //   if (key.textContent >= 0 || key.textContent <= 9) {
-  //     if (data.holder.length <= 1) {
-  //       data.display.textContent = "";
-  //     }
-  //     displaySelectedChar(key.textContent, data.display);
-  //     data.holder.push(key.textContent);
-  //   }
-  //   // if decimal point is pressed
-  //   if (key.textContent === "." && data.holder.indexOf(".") === -1) {
-  //     displaySelectedChar(key.textContent, data.display);
-  //     data.holder.push(key.textContent);
-  //   }
+  function processInput(inputKey) {
+    console.log(inputKey);
 
-  //   if (key.textContent === "+") {
-  //     performOperation(makeAdd);
-  //   }
+    if (inputKey === "Delete") {
+      reset();
+    }
+    // if numeric key is pressed
+    if (inputKey >= 0 || inputKey <= 9) {
+      if (data.operand.length <= 1) {
+        data.display.textContent = "";
+      }
+      if (data.decimalCount < 20) {
+        displaySelectedChar(inputKey, data.display);
+        data.operand.push(inputKey);
+        data.decimalCount += 1;
+      }
+    }
+    // if decimal point is pressed
+    if (inputKey === "." && data.operand.indexOf(".") === -1) {
+      displaySelectedChar(inputKey, data.display);
+      data.operand.push(inputKey);
+    }
 
-  //   if (key.textContent === "-") {
-  //     performOperation(makeSubtract);
-  //   }
+    // if (key.textContent === "+") {
+    //   performOperation(makeAdd);
+    // }
 
-  //   if (key.textContent === "*") {
-  //     performOperation(makeMultiply);
-  //   }
+    // if (key.textContent === "-") {
+    //   performOperation(makeSubtract);
+    // }
 
-  //   if (key.textContent === "/") {
-  //     performOperation(makeDivide);
-  //   }
+    // if (key.textContent === "*") {
+    //   performOperation(makeMultiply);
+    // }
 
-  //   if (key.textContent === "=") {
-  //     if (data.operator) {
-  //       data.display.textContent = performCalc(parseNumber());
-  //       data.operator = null;
-  //       data.calcResult = 0;
-  //       resetInputHolder();
-  //     }
-  //   }
+    // if (key.textContent === "/") {
+    //   performOperation(makeDivide);
+    // }
 
-  //   if (key.textContent === "back") {
-  //     data.holder.pop();
-  //     data.display.textContent = data.holder.join("").slice(1);
-  //   }
+    // if (key.textContent === "=") {
+    //   if (data.operator) {
+    //     data.display.textContent = performCalc(parseNumber());
+    //     data.operator = null;
+    //     data.calcResult = 0;
+    //     resetOperand();
+    //   }
+    // }
 
-  //   if (key.textContent === "+/-") {
-  //     data.holder[1] = String(parseFloat(data.holder[1] * -1));
-  //     data.display.textContent = data.holder.join("").slice(1);
-  //   }
-  // }
+    // if (key.textContent === "back") {
+    //   data.operand.pop();
+    //   data.display.textContent = data.operand.join("").slice(1);
+    // }
+
+    // if (key.textContent === "+/-") {
+    //   data.operand[1] = String(parseFloat(data.operand[1] * -1));
+    //   data.display.textContent = data.operand.join("").slice(1);
+    // }
+  }
 })();
