@@ -14,9 +14,7 @@ h1 {
 }
 
 .main {
-  background-color: #c2c2d6;
-  border: 1px solid #8585ad;
-  /* height: 600px; */
+  background-color: #99e699;
   padding: 1rem 0 2rem;
 }
 
@@ -33,6 +31,7 @@ h1 {
   border: 1px solid #9494b8;
   border-radius: 5px;
   font-size: 1.25rem;
+  box-shadow: 2px 2px 8px #444
 }
 
 .container {
@@ -47,7 +46,7 @@ h1 {
 .box {
   width: 70px;
   height: 70px;
-  }
+}
 
 .key {
   display: flex;
