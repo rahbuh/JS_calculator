@@ -30,7 +30,7 @@
     display: document.querySelector("#display"),
     calcResult: 0,
     operator: null,
-    operand: [0],
+    operand: ["0"],
     operandLength: 0,
     decimalCount: 0,
     memory: 0
@@ -99,7 +99,7 @@
     data.operandLength = 0;
     data.decimalCount = 0;
     data.operand.length = 0;
-    data.operand.push(0);
+    data.operand.push("0");
     console.log("Reset Complete");
   }
 
@@ -113,32 +113,32 @@
   // }
 
   // // Operator closure functions
-  // function makeAdd(x) {
-  //   return function(y) {
-  //     return x + y;
-  //   };
-  // }
+  function makeAdd(x) {
+    return function(y) {
+      return x + y;
+    };
+  }
 
-  // function makeSubtract(x) {
-  //   return function(y) {
-  //     return x - y;
-  //   };
-  // }
+  function makeSubtract(x) {
+    return function(y) {
+      return x - y;
+    };
+  }
 
-  // function makeMultiply(x) {
-  //   return function(y) {
-  //     return x * y;
-  //   };
-  // }
+  function makeMultiply(x) {
+    return function(y) {
+      return x * y;
+    };
+  }
 
-  // function makeDivide(x) {
-  //   return function(y) {
-  //     if (y === 0) {
-  //       return "Error: cannot divide by 0";
-  //     }
-  //     return x / y;
-  //   };
-  // }
+  function makeDivide(x) {
+    return function(y) {
+      if (y === 0) {
+        return "Error: cannot divide by 0";
+      }
+      return x / y;
+    };
+  }
 
   // // Create operator closure
   // function createOperator(num, makeOp) {
@@ -177,7 +177,7 @@
   // }
 
   function processInput(inputKey) {
-    console.log(inputKey);
+    // console.log(inputKey);
 
     if (inputKey === "Delete") {
       reset();
@@ -224,14 +224,21 @@
     //   }
     // }
 
-    // if (key.textContent === "back") {
-    //   data.operand.pop();
-    //   data.display.textContent = data.operand.join("").slice(1);
-    // }
+    if (inputKey === "Backspace") {
+      if (data.operand.length > 2) {
+        data.operand.pop();
+        data.display.textContent = data.operand.join("").slice(1);
+      } else if (data.operand.length = 2) {
+        data.operand.pop();
+        data.display.textContent = data.operand.join("")
+      }
+    }
 
     // if (key.textContent === "+/-") {
     //   data.operand[1] = String(parseFloat(data.operand[1] * -1));
     //   data.display.textContent = data.operand.join("").slice(1);
     // }
+
+    console.log(data.operand);
   }
 })();
