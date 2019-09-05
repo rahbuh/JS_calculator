@@ -29,9 +29,13 @@
   const data = {
     display: document.querySelector("#display"),
     calcResult: 0,
-    operator: null,
     operand: ["0"],
-    operandLength: 0,
+    calculation: {
+      operand1: null,
+      operand2: null,
+      operator: null
+    },
+    decimalPlaces: 0,
     digitCount: 0,
     memory: 0
   };
@@ -95,43 +99,18 @@
   function reset() {
     data.display.textContent = "0";
     data.calcResult = 0;
-    data.operator = null;
-    data.operandLength = 0;
+    data.operand = ["0"];
+    data.calculation = {
+      operand1: null,
+      operand2: null,
+      operator: null
+    };
+    data.decimalPlaces = 0;
     data.digitCount = 0;
-    data.operand.length = 0;
-    data.operand.push("0");
   }
 
   function memoryClear() {
     data.memory = 0;
-  }
-
-  // Operator closure functions
-  function makeAdd(x) {
-    return function(y) {
-      return x + y;
-    };
-  }
-
-  function makeSubtract(x) {
-    return function(y) {
-      return x - y;
-    };
-  }
-
-  function makeMultiply(x) {
-    return function(y) {
-      return x * y;
-    };
-  }
-
-  function makeDivide(x) {
-    return function(y) {
-      if (y === 0) {
-        return "Error: cannot divide by 0";
-      }
-      return x / y;
-    };
   }
 
   // Show selected number or decimal point on display
@@ -144,36 +123,33 @@
     }
   }
 
-  // function resetOperand() {
-  //   data.operand.length = 0;
-  //   data.operand.push(0);
-  // }
-
-  // // Create operator closure
-  // function createOperator(num, makeOp) {
-  //   return makeOp(num);
-  // }
-
-  // // Use operator closure to calculate
-  // function performCalc(num) {
-  //   return data.operator(num);
-  // }
+  function resetOperand() {
+    data.operand = ["0"];
+  }
 
   // function parseNumber() {
   //   return parseFloat(data.operand.join("").slice(1));
   // }
 
-  // function performOperation(fn) {
-  //   if (!data.operator) {
-  //     data.calcResult += parseNumber();
-  //     data.operator = createOperator(data.calcResult, fn);
-  //   } else {
-  //     data.calcResult = performCalc(parseNumber());
-  //     data.operator = createOperator(data.calcResult, fn);
-  //   }
-  //   data.display.textContent = data.calcResult;
-  //   resetOperand();
-  // }
+  function performOperation(inputKey) {
+
+    if (!data.calculation.operator) {
+      if (data.operand.length <= 1) {
+        data.calculation.operand1 = String(data.calcResult)
+      } else {
+        data.calculation.operand1 = data.operand.join("").slice(1);
+        resetOperand()
+      }
+      data.calculation.operator = inputKey;
+      console.log(data.calculation)
+    } else {
+      data.calculation.operand2 = data.operand.join("").slice(1);
+      resetOperand()
+      console.log(data.calculation)
+      // runCalc(data.calculation)
+    }
+
+  }
 
   function processInput(inputKey) {
     if (inputKey === "Delete") {
@@ -206,21 +182,11 @@
       }
     }
 
-    // if (key.textContent === "+") {
-    //   performOperation(makeAdd);
-    // }
+    if (inputKey === "+" || inputKey === "-" || inputKey === "*" || inputKey === "/") {
+      performOperation(inputKey);
+    }
 
-    // if (key.textContent === "-") {
-    //   performOperation(makeSubtract);
-    // }
 
-    // if (key.textContent === "*") {
-    //   performOperation(makeMultiply);
-    // }
-
-    // if (key.textContent === "/") {
-    //   performOperation(makeDivide);
-    // }
 
     // if (key.textContent === "=") {
     //   if (data.operator) {
