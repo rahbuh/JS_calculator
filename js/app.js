@@ -35,7 +35,6 @@
       operand2: null,
       operator: null
     },
-    decimalPlaces: 0,
     digitCount: 0,
     memory: 0
   };
@@ -57,22 +56,22 @@
     }
   })(keysArray);
 
-  // add mouse click event listener
+  // ADD EVENT LISTENER FOR MOUSE CLICK
   const keys = document.querySelectorAll(".key");
   keys.forEach(key => {
     key.addEventListener("click", clickAction);
   });
 
-  // add key press event listener
+  // ADD EVENT LISTENER FOR KEY PRESS
   document.addEventListener("keyup", keyPressAction);
 
-  // mouse click action
+  // MOUSE CLICK ACTION
   function clickAction(e) {
     const key = e.target;
     processKeyInput(key);
   }
 
-  // key pressed action
+  // KEY PRESS ACTION
   function keyPressAction(e) {
     const key = document.querySelector(`.key[data-key="${e.key}"]`);
     processKeyInput(key);
@@ -85,7 +84,7 @@
     }
   }
 
-  // Key animation
+  // KEY ANIMATION
   function keyAnimation(key) {
     key.classList.add("key-clicked");
     key.addEventListener("transitionend", removeTransition);
@@ -96,6 +95,7 @@
     this.classList.remove("key-clicked");
   }
 
+  // RESETS
   function reset() {
     data.display.textContent = "0";
     data.calcResult = 0;
@@ -105,7 +105,6 @@
       operand2: null,
       operator: null
     };
-    data.decimalPlaces = 0;
     data.digitCount = 0;
   }
 
@@ -113,7 +112,11 @@
     data.memory = 0;
   }
 
-  // Show selected number or decimal point on display
+  function resetOperand() {
+    data.operand = ["0"];
+  }
+
+  // SHOW NUMBER OR DECIMAL POINT ON THE DISPLAY
   function displaySelectedChar(key, display) {
     if (data.operand.length <= 1 && key === ".") {
       key = "0.";
@@ -123,39 +126,11 @@
     }
   }
 
-  function resetOperand() {
-    data.operand = ["0"];
-  }
-
-  // function parseNumber() {
-  //   return parseFloat(data.operand.join("").slice(1));
-  // }
-
-  function performOperation(inputKey) {
-
-    if (!data.calculation.operator) {
-      if (data.operand.length <= 1) {
-        data.calculation.operand1 = String(data.calcResult)
-      } else {
-        data.calculation.operand1 = data.operand.join("").slice(1);
-        resetOperand()
-      }
-      data.calculation.operator = inputKey;
-      console.log(data.calculation)
-    } else {
-      data.calculation.operand2 = data.operand.join("").slice(1);
-      resetOperand()
-      console.log(data.calculation)
-      // runCalc(data.calculation)
-    }
-
-  }
-
   function processInput(inputKey) {
     if (inputKey === "Delete") {
       reset();
     }
-    // if numeric key is pressed
+    // IF NUMERIC KEY IS PRESSED (20 DIGITS MAX)
     if (inputKey >= 0 || inputKey <= 9) {
       if (data.operand.length <= 1) {
         data.display.textContent = "";
@@ -166,27 +141,30 @@
         data.digitCount += 1;
       }
     }
-    // if decimal point is pressed and no decimal exists in number
+    // IF DECIMAL POINT IS PRESSED AND NO DECIMAL EXISTS IN NUMBER
     if (inputKey === "." && data.operand.indexOf(".") === -1) {
       displaySelectedChar(inputKey, data.display);
       data.operand.push(inputKey);
     }
-    
+
     if (inputKey === "Backspace") {
       if (data.operand.length > 2) {
         data.operand.pop();
         data.display.textContent = data.operand.join("").slice(1);
-      } else if (data.operand.length = 2) {
+      } else if ((data.operand.length = 2)) {
         data.operand.pop();
-        data.display.textContent = data.operand.join("")
+        data.display.textContent = data.operand.join("");
       }
     }
 
-    if (inputKey === "+" || inputKey === "-" || inputKey === "*" || inputKey === "/") {
+    if (
+      inputKey === "+" ||
+      inputKey === "-" ||
+      inputKey === "*" ||
+      inputKey === "/"
+    ) {
       performOperation(inputKey);
     }
-
-
 
     // if (key.textContent === "=") {
     //   if (data.operator) {
@@ -201,7 +179,87 @@
     //   data.operand[1] = String(parseFloat(data.operand[1] * -1));
     //   data.display.textContent = data.operand.join("").slice(1);
     // }
-
-    console.log(data.operand);
   }
+
+  function convertToWholeNumber(strNum, decimalPlaces) {
+    if (decimalPlaces > 0) {
+      const mult = 10 ** decimalPlaces;
+      return Number(strNum) * mult;
+    } else {
+      return Number(strNum);
+    }
+  }
+
+  function countDecimalPlaces(strNum) {
+    const numberLength = strNum.length - 1;
+    const decimalIndex = strNum.indexOf(".");
+
+    if (decimalIndex === -1) {
+      return 0;
+    } else return numberLength - decimalIndex;
+  }
+
+  function findMaxDecimalPlaces(strNum1, strNum2) {
+    let max = Math.max(
+      countDecimalPlaces(strNum1),
+      countDecimalPlaces(strNum2)
+    );
+    console.log(`Num1: ${strNum1} Num2: ${strNum2} `);
+    // console.log("Max is " + max);
+    return max;
+  }
+
+  function runCalc({ operand1, operand2, operator }) {
+    let result = 0;
+    const decimalPlaces = findMaxDecimalPlaces(operand1, operand2);
+    const num1 = convertToWholeNumber(operand1, decimalPlaces);
+    const num2 = convertToWholeNumber(operand2, decimalPlaces);
+
+    if (operator === "+") {
+      decimalPlaces > 0
+        ? (result = (num1 + num2) / decimalPlaces)
+        : (result = num1 + num2);
+    }
+    if (operator === "-") {
+      decimalPlaces > 0
+        ? (result = (num1 - num2) / decimalPlaces)
+        : (result = num1 - num2);
+    }
+    if (operator === "*") {
+      decimalPlaces > 0
+        ? (result = (num1 * num2) / decimalPlaces)
+        : (result = num1 * num2);
+    }
+    if (operator === "/") {
+      if (num1 === 0 && num2 === 0) {
+        result = "Result is undefined";
+      } else if (num2 === 0) {
+        result = "Cannot divide by zero";
+      } else {
+        result = num1 / num2;
+      }
+    }
+    console.log(num1, num2);
+    console.log(result);
+    return result;
+  }
+
+  function performOperation(inputKey) {
+    if (!data.calculation.operator) {
+      if (data.operand.length <= 1) {
+        data.calculation.operand1 = String(data.calcResult);
+      } else {
+        data.calculation.operand1 = data.operand.join("").slice(1);
+        resetOperand();
+      }
+      data.calculation.operator = inputKey;
+      // console.log(data.calculation);
+    } else {
+      data.calculation.operand2 = data.operand.join("").slice(1);
+      resetOperand();
+      // console.log(data.calculation);
+      data.calcResult = runCalc(data.calculation);
+    }
+  }
+
 })();
