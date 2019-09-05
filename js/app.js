@@ -32,7 +32,7 @@
     operator: null,
     operand: ["0"],
     operandLength: 0,
-    decimalCount: 0,
+    digitCount: 0,
     memory: 0
   };
 
@@ -97,22 +97,16 @@
     data.calcResult = 0;
     data.operator = null;
     data.operandLength = 0;
-    data.decimalCount = 0;
+    data.digitCount = 0;
     data.operand.length = 0;
     data.operand.push("0");
-    console.log("Reset Complete");
   }
 
   function memoryClear() {
     data.memory = 0;
   }
 
-  // function resetOperand() {
-  //   data.operand.length = 0;
-  //   data.operand.push(0);
-  // }
-
-  // // Operator closure functions
+  // Operator closure functions
   function makeAdd(x) {
     return function(y) {
       return x + y;
@@ -140,16 +134,6 @@
     };
   }
 
-  // // Create operator closure
-  // function createOperator(num, makeOp) {
-  //   return makeOp(num);
-  // }
-
-  // // Use operator closure to calculate
-  // function performCalc(num) {
-  //   return data.operator(num);
-  // }
-
   // Show selected number or decimal point on display
   function displaySelectedChar(key, display) {
     if (data.operand.length <= 1 && key === ".") {
@@ -159,6 +143,21 @@
       display.textContent += key;
     }
   }
+
+  // function resetOperand() {
+  //   data.operand.length = 0;
+  //   data.operand.push(0);
+  // }
+
+  // // Create operator closure
+  // function createOperator(num, makeOp) {
+  //   return makeOp(num);
+  // }
+
+  // // Use operator closure to calculate
+  // function performCalc(num) {
+  //   return data.operator(num);
+  // }
 
   // function parseNumber() {
   //   return parseFloat(data.operand.join("").slice(1));
@@ -177,8 +176,6 @@
   // }
 
   function processInput(inputKey) {
-    // console.log(inputKey);
-
     if (inputKey === "Delete") {
       reset();
     }
@@ -187,16 +184,26 @@
       if (data.operand.length <= 1) {
         data.display.textContent = "";
       }
-      if (data.decimalCount < 20) {
+      if (data.digitCount < 20) {
         displaySelectedChar(inputKey, data.display);
         data.operand.push(inputKey);
-        data.decimalCount += 1;
+        data.digitCount += 1;
       }
     }
-    // if decimal point is pressed
+    // if decimal point is pressed and no decimal exists in number
     if (inputKey === "." && data.operand.indexOf(".") === -1) {
       displaySelectedChar(inputKey, data.display);
       data.operand.push(inputKey);
+    }
+    
+    if (inputKey === "Backspace") {
+      if (data.operand.length > 2) {
+        data.operand.pop();
+        data.display.textContent = data.operand.join("").slice(1);
+      } else if (data.operand.length = 2) {
+        data.operand.pop();
+        data.display.textContent = data.operand.join("")
+      }
     }
 
     // if (key.textContent === "+") {
@@ -223,16 +230,6 @@
     //     resetOperand();
     //   }
     // }
-
-    if (inputKey === "Backspace") {
-      if (data.operand.length > 2) {
-        data.operand.pop();
-        data.display.textContent = data.operand.join("").slice(1);
-      } else if (data.operand.length = 2) {
-        data.operand.pop();
-        data.display.textContent = data.operand.join("")
-      }
-    }
 
     // if (key.textContent === "+/-") {
     //   data.operand[1] = String(parseFloat(data.operand[1] * -1));
