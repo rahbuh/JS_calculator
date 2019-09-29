@@ -21,6 +21,7 @@
     data.operator = null;
     data.holder.length = 0;
     data.holder.push(0);
+    // pointless comment for testing here
   }
 
   function resetInputHolder() {
