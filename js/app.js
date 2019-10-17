@@ -1,5 +1,9 @@
-(function() {
+document.body.onload = function() {
   const keysArray = [
+    { keyname: "MemClear", keytext: "MC", classes: ["key", "single"] },
+    { keyname: "MemRecall", keytext: "MR", classes: ["key", "single"] },
+    { keyname: "MemPlus", keytext: "M+", classes: ["key", "single"] },
+    { keyname: "MemMinus", keytext: "M-", classes: ["key", "single"] },
     { keyname: 7, keytext: 7, classes: ["key", "single"] },
     { keyname: 8, keytext: 8, classes: ["key", "single"] },
     { keyname: 9, keytext: 9, classes: ["key", "single"] },
@@ -48,7 +52,6 @@
 
   // MOUSE CLICK ACTION
   function clickAction(e) {
-    console.log(e.target);
     const key = e.target;
     keyAnimation(key);
     processInput(key.getAttribute("data-key"));
@@ -384,4 +387,4 @@
   }
 
   init(keysArray);
-})();
+};
