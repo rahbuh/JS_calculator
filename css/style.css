@@ -67,7 +67,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.07s ease;
+  transition: all 0.05s ease;
   cursor: pointer;
 }
 
