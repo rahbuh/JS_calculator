@@ -1,4 +1,4 @@
-document.body.onload = function() {
+(function() {
   const keysArray = [
     { keyname: "MemClear", keytext: "MC", classes: ["key", "single"] },
     { keyname: "MemRecall", keytext: "MR", classes: ["key", "single"] },
@@ -53,8 +53,10 @@ document.body.onload = function() {
   // MOUSE CLICK ACTION
   function clickAction(e) {
     const key = e.target;
-    keyAnimation(key);
-    processInput(key.getAttribute("data-key"));
+    if (e.target.classList.value) {
+      keyAnimation(key);
+      processInput(key.getAttribute("data-key"));
+    }
   }
 
   // ADD EVENT LISTENER FOR KEY PRESS
@@ -125,6 +127,12 @@ document.body.onload = function() {
       case "*":
       case "/":
         performOperation(inputKey);
+        break;
+      case "MemClear":
+      case "MemRecall":
+      case "MemPlus":
+      case "MemMinus":
+        processMemory(inputKey);
         break;
       case ".":
         processDecimal(inputKey);
@@ -231,6 +239,10 @@ document.body.onload = function() {
       data.calculation.operand2 = operand;
       processCalculation(operation);
     }
+  }
+
+  function processMemory(key) {
+    console.log("Memory Key", key);
   }
 
   function totalCalulation() {
@@ -387,4 +399,4 @@ document.body.onload = function() {
   }
 
   init(keysArray);
-};
+})();
