@@ -1,11 +1,11 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
-  box-sizing: border-box;
+  font-family: 'Roboto Mono', monospace;
 }
 
 h1 {
@@ -13,16 +13,33 @@ h1 {
   margin: 0 0 1rem;
 }
 
-.main {
+#main {
+  background-color: #c2f1c2;
+  padding: 1rem 0;
+  width: 350px;
+  margin: 20px auto 0;
+}
+
+#calculator {
   background-color: #99e699;
-  padding: 1rem 0 2rem;
+  border-radius: 5px;
+  width: 320px;
+  margin: 0 auto;
+  padding: 5px;
 }
 
 #display {
-  width: 320px;
   text-align: right;
-  margin: 0 auto;
+  margin: 0 5px;
   padding: 5px;
+}
+
+#key-wrapper {
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(auto-fill, 70px);
+  justify-content: center;
+  margin: 20px 0;
 }
 
 #display,
@@ -31,21 +48,8 @@ h1 {
   border: 1px solid #9494b8;
   border-radius: 5px;
   font-size: 1.25rem;
+  height: 40px;
   box-shadow: 2px 2px 8px #444
-}
-
-.container {
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 70px);
-  justify-content: center;
-  width: 320px;
-  margin: 20px auto;
-}
-
-.box {
-  width: 70px;
-  height: 70px;
 }
 
 .key {
@@ -53,13 +57,27 @@ h1 {
   align-items: center;
   justify-content: center;
   transition: all 0.07s ease;
+  cursor: pointer;
+}
+
+.single {
   width: 68px;
   height: 68px;
-  cursor: pointer;
+}
+
+.double {
+  width: 146px;
+  height: 68px;
 }
 
 .key-clicked {
   transform: scale(0.95);
   border: 2px solid #9494b8;
   box-shadow: 0 0 3px #999999;
+}
+
+.key:hover,
+.key-clicked {
+  background-color: #008000;
+  color: #fff;
 }

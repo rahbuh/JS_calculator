@@ -1,83 +1,65 @@
-(function calculator() {
+(function() {
   const keysArray = [
-    { keyname: "M-clear", keytext: "MC" },
-    { keyname: "M-recall", keytext: "MR" },
-    { keyname: "M-add", keytext: "M+" },
-    { keyname: "M-sub", keytext: "M-" },
-    { keyname: 7, keytext: 7 },
-    { keyname: 8, keytext: 8 },
-    { keyname: 9, keytext: 9 },
-    { keyname: "/", keytext: "/" },
-    { keyname: 4, keytext: 4 },
-    { keyname: 5, keytext: 5 },
-    { keyname: 6, keytext: 6 },
-    { keyname: "*", keytext: "*" },
-    { keyname: 1, keytext: 1 },
-    { keyname: 2, keytext: 2 },
-    { keyname: 3, keytext: 3 },
-    { keyname: "+", keytext: "+" },
-    { keyname: "neg", keytext: "+/-" },
-    { keyname: 0, keytext: 0 },
-    { keyname: ".", keytext: "." },
-    { keyname: "-", keytext: "-" },
-    { keyname: "Delete", keytext: "C" },
-    { keyname: "Backspace", keytext: "back" },
-    { keyname: "blank", keytext: "" },
-    { keyname: "Enter", keytext: "=" }
+    { keyname: 7, keytext: 7, classes: ["key", "single"] },
+    { keyname: 8, keytext: 8, classes: ["key", "single"] },
+    { keyname: 9, keytext: 9, classes: ["key", "single"] },
+    { keyname: "/", keytext: "/", classes: ["key", "single"] },
+    { keyname: 4, keytext: 4, classes: ["key", "single"] },
+    { keyname: 5, keytext: 5, classes: ["key", "single"] },
+    { keyname: 6, keytext: 6, classes: ["key", "single"] },
+    { keyname: "*", keytext: "*", classes: ["key", "single"] },
+    { keyname: 1, keytext: 1, classes: ["key", "single"] },
+    { keyname: 2, keytext: 2, classes: ["key", "single"] },
+    { keyname: 3, keytext: 3, classes: ["key", "single"] },
+    { keyname: "+", keytext: "+", classes: ["key", "single"] },
+    { keyname: "neg", keytext: "+/-", classes: ["key", "single"] },
+    { keyname: 0, keytext: 0, classes: ["key", "single"] },
+    { keyname: ".", keytext: ".", classes: ["key", "single"] },
+    { keyname: "-", keytext: "-", classes: ["key", "single"] },
+    { keyname: "Delete", keytext: "C", classes: ["key", "single"] },
+    { keyname: "Backspace", keytext: "back", classes: ["key", "single"] },
+    { keyname: "Enter", keytext: "=", classes: ["key", "double"] }
   ];
 
   const data = {
-    display: document.querySelector("#display"),
-    calcResult: 0,
-    operand: ["0"],
+    displayWindow: document.querySelector("#display"),
+    currentOperand: ["0"],
     calculation: {
       operand1: null,
       operand2: null,
       operator: null
     },
-    digitCount: 0,
-    memory: 0
+    calcResult: 0,
+    digitCount: 0
   };
 
-  (function(keyList) {
-    const container = document.querySelector(".container");
+  function init(keyList) {
+    const wrapper = document.querySelector("#key-wrapper");
+    wrapper.addEventListener("click", clickAction);
 
     for (let key of keyList) {
       const box = document.createElement("div");
-      box.classList.add("box");
-
-      const keyDiv = document.createElement("div");
-      keyDiv.classList.add("key");
-      keyDiv.setAttribute("data-key", key["keyname"]);
-      keyDiv.innerText = key["keytext"];
-
-      box.appendChild(keyDiv);
-      container.appendChild(box);
+      box.classList.add(...key["classes"]);
+      box.setAttribute("data-key", key["keyname"]);
+      box.innerText = key["keytext"];
+      wrapper.appendChild(box);
     }
-  })(keysArray);
+  }
 
-  // ADD EVENT LISTENER FOR MOUSE CLICK
-  const keys = document.querySelectorAll(".key");
-  keys.forEach(key => {
-    key.addEventListener("click", clickAction);
-  });
+  // MOUSE CLICK ACTION
+  function clickAction(e) {
+    console.log(e.target);
+    const key = e.target;
+    keyAnimation(key);
+    processInput(key.getAttribute("data-key"));
+  }
 
   // ADD EVENT LISTENER FOR KEY PRESS
   document.addEventListener("keyup", keyPressAction);
 
-  // MOUSE CLICK ACTION
-  function clickAction(e) {
-    const key = e.target;
-    processKeyInput(key);
-  }
-
   // KEY PRESS ACTION
   function keyPressAction(e) {
     const key = document.querySelector(`.key[data-key="${e.key}"]`);
-    processKeyInput(key);
-  }
-
-  function processKeyInput(key) {
     if (key) {
       keyAnimation(key);
       processInput(key.getAttribute("data-key"));
@@ -97,169 +79,309 @@
 
   // RESETS
   function reset() {
-    data.display.textContent = "0";
-    data.calcResult = 0;
-    data.operand = ["0"];
+    data.displayWindow.textContent = 0;
+    data.currentOperand = ["0"];
     data.calculation = {
       operand1: null,
       operand2: null,
       operator: null
     };
+    data.calcResult = 0;
     data.digitCount = 0;
   }
 
-  function memoryClear() {
-    data.memory = 0;
-  }
-
   function resetOperand() {
-    data.operand = ["0"];
+    data.currentOperand = ["0"];
   }
 
-  // SHOW NUMBER OR DECIMAL POINT ON THE DISPLAY
-  function displaySelectedChar(key, display) {
-    if (data.operand.length <= 1 && key === ".") {
-      key = "0.";
-      display.textContent = key;
-    } else {
-      display.textContent += key;
-    }
+  function updateCalc(results, key) {
+    data.calculation = {
+      operand1: results,
+      operand2: null,
+      operator: key
+    };
   }
 
+  // PROCESS INPUT
   function processInput(inputKey) {
-    if (inputKey === "Delete") {
-      reset();
+    switch (inputKey) {
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        processNumber(inputKey);
+        break;
+      case "+":
+      case "-":
+      case "*":
+      case "/":
+        performOperation(inputKey);
+        break;
+      case ".":
+        processDecimal(inputKey);
+        break;
+      case "Enter":
+        totalCalulation(data.calculation);
+        break;
+      case "Backspace":
+        backspace();
+        break;
+      case "Delete":
+        reset();
+        break;
+      case "neg":
+        negate();
+        break;
+      default:
+        console.log("No match");
+        break;
     }
-    // IF NUMERIC KEY IS PRESSED (20 DIGITS MAX)
-    if (inputKey >= 0 || inputKey <= 9) {
-      if (data.operand.length <= 1) {
-        data.display.textContent = "";
-      }
-      if (data.digitCount < 20) {
-        displaySelectedChar(inputKey, data.display);
-        data.operand.push(inputKey);
-        data.digitCount += 1;
-      }
-    }
-    // IF DECIMAL POINT IS PRESSED AND NO DECIMAL EXISTS IN NUMBER
-    if (inputKey === "." && data.operand.indexOf(".") === -1) {
-      displaySelectedChar(inputKey, data.display);
-      data.operand.push(inputKey);
-    }
-
-    if (inputKey === "Backspace") {
-      if (data.operand.length > 2) {
-        data.operand.pop();
-        data.display.textContent = data.operand.join("").slice(1);
-      } else if ((data.operand.length = 2)) {
-        data.operand.pop();
-        data.display.textContent = data.operand.join("");
-      }
-    }
-
-    if (
-      inputKey === "+" ||
-      inputKey === "-" ||
-      inputKey === "*" ||
-      inputKey === "/"
-    ) {
-      performOperation(inputKey);
-    }
-
-    // if (key.textContent === "=") {
-    //   if (data.operator) {
-    //     data.display.textContent = performCalc(parseNumber());
-    //     data.operator = null;
-    //     data.calcResult = 0;
-    //     resetOperand();
-    //   }
-    // }
-
-    // if (key.textContent === "+/-") {
-    //   data.operand[1] = String(parseFloat(data.operand[1] * -1));
-    //   data.display.textContent = data.operand.join("").slice(1);
-    // }
   }
 
-  function convertToWholeNumber(strNum, decimalPlaces) {
-    if (decimalPlaces > 0) {
-      const mult = 10 ** decimalPlaces;
-      return Number(strNum) * mult;
-    } else {
-      return Number(strNum);
+  function processNumber(inputKey) {
+    const storedNumber = data.currentOperand;
+    const hasLeadingZero = storedNumber[1] === "0" && storedNumber[2] !== ".";
+
+    if (storedNumber.length > 2 && hasLeadingZero) {
+      data.currentOperand.splice(1, 1);
     }
+    if (data.digitCount < 20) {
+      displaySelectedChar(inputKey);
+      data.currentOperand.push(inputKey);
+      data.digitCount += 1;
+    }
+  }
+
+  function processDecimal(inputKey) {
+    const noDecimalFoundInOperand = data.currentOperand.indexOf(".") === -1;
+
+    if (inputKey === "." && noDecimalFoundInOperand) {
+      displaySelectedChar(inputKey);
+      data.currentOperand.push(inputKey);
+    }
+  }
+
+  function backspace() {
+    const sizeOfOperandStorage = data.currentOperand.length;
+    data.currentOperand.pop();
+
+    if (sizeOfOperandStorage > 2) {
+      data.displayWindow.textContent = data.currentOperand.join("").slice(1);
+    } else if (sizeOfOperandStorage === 2) {
+      data.displayWindow.textContent = data.currentOperand.join("");
+    }
+  }
+
+  function negate() {
+    const current = Number(data.currentOperand.join(""));
+    if (current !== 0) {
+      if (data.currentOperand.indexOf("-") === -1) {
+        data.currentOperand.splice(0, 1);
+        data.currentOperand = ["0", "-"].concat(data.currentOperand);
+      } else {
+        data.currentOperand.splice(0, 2);
+        data.currentOperand = ["0"].concat(data.currentOperand);
+      }
+      displayCalcResults(Number(data.currentOperand.join("").slice(1)));
+    } else {
+      displayCalcResults((data.calculation.operand1 *= -1));
+    }
+  }
+
+  // DISPLAY DATA
+  function displaySelectedChar(key) {
+    const disp = data.displayWindow;
+    const currentOperandIsZero = data.currentOperand.length <= 1;
+
+    if (currentOperandIsZero) {
+      key === "." ? (disp.textContent = "0.") : (disp.textContent = key);
+    } else {
+      disp.textContent += key;
+    }
+  }
+
+  function displayCalcResults(result) {
+    data.displayWindow.textContent = result;
+  }
+
+  // OPERATIONS
+  function performOperation(operation) {
+    const operand = Number(data.currentOperand.join("").slice(1));
+    const { operand1, operator } = data.calculation;
+
+    if (operator === null) {
+      if (operand1 === null) {
+        data.calculation.operand1 = operand;
+        data.calculation.operator = operation;
+        resetOperand();
+      } else {
+        data.calculation.operand2 = operand;
+        data.calculation.operator = operation;
+      }
+    } else {
+      data.calculation.operand2 = operand;
+      processCalculation(operation);
+    }
+  }
+
+  function totalCalulation() {
+    const { operand1 } = data.calculation;
+    if (operand1 === null) {
+      displayCalcResults(0);
+    } else if (operand1 !== null && data.currentOperand.length < 2) {
+      data.calculation.operand2 = operand1;
+      processCalculation(null);
+    } else {
+      const operand = Number(data.currentOperand.join("").slice(1));
+      data.calculation.operand2 = operand;
+      processCalculation(null);
+    }
+  }
+
+  function processCalculation(operation) {
+    data.calcResult = runCalc(data.calculation);
+    displayCalcResults(data.calcResult);
+    updateCalc(data.calcResult, operation);
+    resetOperand();
+  }
+
+  function runCalc({ operand1, operand2, operator }) {
+    const equationComplete =
+      operand1 !== null && operand2 !== null && operator !== null;
+    let result = 0;
+
+    if (equationComplete) {
+      switch (operator) {
+        case "+":
+          result = calculate(operand1, operand2, add);
+          break;
+        case "-":
+          result = calculate(operand1, operand2, subtract);
+          break;
+        case "*":
+          result = calculate(operand1, operand2, multiply);
+          break;
+        case "/":
+          result = calculate(operand1, operand2, divide);
+          break;
+        default:
+          result = "operation error";
+          break;
+      }
+      return result;
+    }
+  }
+
+  function add(addend1, addend2) {
+    if (isFloat(addend1) || isFloat(addend2)) {
+      return addOrSubFloat(addend1, addend2, "add");
+    } else {
+      return addend1 + addend2;
+    }
+  }
+
+  function subtract(minuend, subtrahend) {
+    if (isFloat(minuend) || isFloat(subtrahend)) {
+      return addOrSubFloat(minuend, subtrahend, "sub");
+    } else {
+      return minuend - subtrahend;
+    }
+  }
+
+  function multiply(factor1, factor2) {
+    if (isFloat(factor1) || isFloat(factor2)) {
+      return multOrDivFloat(factor1, factor2, "mult");
+    } else {
+      return factor1 * factor2;
+    }
+  }
+
+  function divide(dividend, divisor) {
+    if (dividend === 0 && divisor === 0) {
+      return "Result is undefined";
+    } else if (divisor === 0) {
+      return "Cannot divide by zero";
+    } else {
+      if (isFloat(dividend) || isFloat(divisor)) {
+        return multOrDivFloat(dividend, divisor, "div");
+      } else {
+        return dividend / divisor;
+      }
+    }
+  }
+
+  function calculate(num1, num2, fn) {
+    return fn(num1, num2);
+  }
+
+  function isFloat(num) {
+    return String(num).indexOf(".") !== -1;
+  }
+
+  function addOrSubFloat(num1, num2, operation) {
+    const decimalPlaces = findMaxDecimalPlaces(num1, num2);
+    let result = 0;
+    let wholeNum1 = convertToWholeNumber(num1, decimalPlaces);
+    let wholeNum2 = convertToWholeNumber(num2, decimalPlaces);
+    operation === "add"
+      ? (result = wholeNum1 + wholeNum2)
+      : (result = wholeNum1 - wholeNum2);
+
+    return convertToDecimal(result, decimalPlaces);
+  }
+
+  function multOrDivFloat(num1, num2, operation) {
+    const decimalCount1 = countDecimalPlaces(String(num1));
+    const decimalCount2 = countDecimalPlaces(String(num2));
+    const decimalPlaces = decimalCount1 + decimalCount2;
+    let result = 0;
+    let wholeNum1 = convertToWholeNumber(num1, decimalCount1);
+    let wholeNum2 = convertToWholeNumber(num2, decimalCount2);
+    operation === "mult"
+      ? (result = wholeNum1 * wholeNum2)
+      : (result = wholeNum1 / wholeNum2);
+
+    return convertToDecimal(result, decimalPlaces);
+  }
+
+  function findMaxDecimalPlaces(num1, num2) {
+    console.log("findMaxDecimalPlaces:", num1, num2);
+    return Math.max(
+      countDecimalPlaces(String(num1)),
+      countDecimalPlaces(String(num2))
+    );
   }
 
   function countDecimalPlaces(strNum) {
     const numberLength = strNum.length - 1;
     const decimalIndex = strNum.indexOf(".");
-
-    if (decimalIndex === -1) {
-      return 0;
-    } else return numberLength - decimalIndex;
+    return decimalIndex === -1 ? 0 : numberLength - decimalIndex;
   }
 
-  function findMaxDecimalPlaces(strNum1, strNum2) {
-    let max = Math.max(
-      countDecimalPlaces(strNum1),
-      countDecimalPlaces(strNum2)
-    );
-    console.log(`Num1: ${strNum1} Num2: ${strNum2} `);
-    // console.log("Max is " + max);
-    return max;
-  }
-
-  function runCalc({ operand1, operand2, operator }) {
-    let result = 0;
-    const decimalPlaces = findMaxDecimalPlaces(operand1, operand2);
-    const num1 = convertToWholeNumber(operand1, decimalPlaces);
-    const num2 = convertToWholeNumber(operand2, decimalPlaces);
-
-    if (operator === "+") {
-      decimalPlaces > 0
-        ? (result = (num1 + num2) / decimalPlaces)
-        : (result = num1 + num2);
-    }
-    if (operator === "-") {
-      decimalPlaces > 0
-        ? (result = (num1 - num2) / decimalPlaces)
-        : (result = num1 - num2);
-    }
-    if (operator === "*") {
-      decimalPlaces > 0
-        ? (result = (num1 * num2) / decimalPlaces)
-        : (result = num1 * num2);
-    }
-    if (operator === "/") {
-      if (num1 === 0 && num2 === 0) {
-        result = "Result is undefined";
-      } else if (num2 === 0) {
-        result = "Cannot divide by zero";
-      } else {
-        result = num1 / num2;
+  function convertToWholeNumber(num, decimalPlaces) {
+    let wholeNum = Number(num);
+    if (decimalPlaces > 0) {
+      for (let i = 1; i <= decimalPlaces; i++) {
+        wholeNum *= 10;
       }
     }
-    console.log(num1, num2);
-    console.log(result);
+    return Math.round(wholeNum);
+  }
+
+  function convertToDecimal(result, decimalPlaces) {
+    if (decimalPlaces > 0) {
+      for (let i = 1; i <= decimalPlaces; i++) {
+        result /= 10;
+      }
+    }
     return result;
   }
 
-  function performOperation(inputKey) {
-    if (!data.calculation.operator) {
-      if (data.operand.length <= 1) {
-        data.calculation.operand1 = String(data.calcResult);
-      } else {
-        data.calculation.operand1 = data.operand.join("").slice(1);
-        resetOperand();
-      }
-      data.calculation.operator = inputKey;
-      // console.log(data.calculation);
-    } else {
-      data.calculation.operand2 = data.operand.join("").slice(1);
-      resetOperand();
-      // console.log(data.calculation);
-      data.calcResult = runCalc(data.calculation);
-    }
-  }
-
+  init(keysArray);
 })();
