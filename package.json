@@ -1,0 +1,22 @@
+{
+  "name": "js_calculator",
+  "version": "1.0.0",
+  "description": "A simple calculator created in vanilla JS",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rahbuh/JS_calculator.git"
+  },
+  "author": "Rob Kramer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rahbuh/JS_calculator/issues"
+  },
+  "homepage": "https://github.com/rahbuh/JS_calculator#readme",
+  "devDependencies": {
+    "jest": "^24.9.0"
+  }
+}
