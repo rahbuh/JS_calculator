@@ -143,14 +143,14 @@
         break;
       case "Backspace":
         console.log("backspace");
-        // backspace();
+        backspace(data.currentOperand);
         break;
       case "Delete":
         reset();
         break;
       case "neg":
         console.log("negate");
-        // negate();
+        negate(data.currentOperand);
         break;
       default:
         console.log("No match for key selected");
@@ -160,7 +160,6 @@
 
   function processNumber(input, currentOperand) {
     const noDecimalFound = currentOperand.indexOf(".") === -1;
-
     if (data.digitCount < 20) {
       currentOperand += input;
       if (input !== "." && noDecimalFound) {
@@ -172,15 +171,14 @@
     }
   }
 
-  function backspace() {
-    const sizeOfOperandStorage = data.currentOperand.length;
-    data.currentOperand.pop();
-
-    if (sizeOfOperandStorage > 2) {
-      data.displayWindow.textContent = data.currentOperand.join("").slice(1);
-    } else if (sizeOfOperandStorage === 2) {
-      data.displayWindow.textContent = data.currentOperand.join("");
-    }
+  function backspace(currentOperand) {
+    operandLength = currentOperand.length;
+    operandLength < 2
+      ? (currentOperand = "0")
+      : (currentOperand = currentOperand.slice(0, currentOperand.length - 1));
+    displayOperand(currentOperand);
+    data.currentOperand = currentOperand;
+    data.digitCount -= 1;
   }
 
   function negate() {
@@ -203,18 +201,11 @@
   function displayOperand(dataToDisplay) {
     const display = data.displayWindow;
     display.textContent = dataToDisplay;
-    // const currentOperandIsZero = data.currentOperand.length <= 1;
-
-    // if (currentOperandIsZero) {
-    //   key === "." ? (display.textContent = "0.") : (display.textContent = key);
-    // } else {
-    //   display.textContent += key;
-    // }
   }
 
-  function displayCalcResults(result) {
-    data.displayWindow.textContent = result;
-  }
+  // function displayCalcResults(result) {
+  //   data.displayWindow.textContent = result;
+  // }
 
   // OPERATIONS
   function performOperation(operation) {
