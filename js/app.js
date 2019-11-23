@@ -36,7 +36,6 @@
       operand2: null,
       operator: null
     },
-    calcResult: 0,
     digitCount: 0
   };
 
@@ -91,7 +90,6 @@
       operand2: null,
       operator: null
     };
-    data.calcResult = 0;
     data.digitCount = 0;
   }
 
@@ -99,13 +97,13 @@
     data.currentOperand = "0";
   }
 
-  // function updateCalc(results, key) {
-  //   data.calculation = {
-  //     operand1: results,
-  //     operand2: null,
-  //     operator: key
-  //   };
-  // }
+  function updateCalculationObj(results, key) {
+    data.calculation = {
+      operand1: results,
+      operand2: null,
+      operator: key
+    };
+  }
 
   // PROCESS INPUT
   function processInput(input) {
@@ -127,8 +125,7 @@
       case "-":
       case "*":
       case "/":
-        console.log("operator: ", input);
-        // performOperation(input);
+        performOperation(input, data.currentOperand);
         break;
       case "MemClear":
       case "MemRecall":
@@ -163,7 +160,8 @@
       if (input !== "." && noDecimalFound) {
         currentOperand = String(parseFloat(currentOperand));
       }
-      updateOperand(currentOperand);
+      updateCurrentOperand(currentOperand);
+      displayNumber(currentOperand);
       data.digitCount += 1;
     }
   }
@@ -173,7 +171,8 @@
     operandLength < 2
       ? (currentOperand = "0")
       : (currentOperand = currentOperand.slice(0, operandLength - 1));
-    updateOperand(currentOperand);
+    updateCurrentOperand(currentOperand);
+    displayNumber(currentOperand);
     data.digitCount -= 1;
   }
 
@@ -182,66 +181,46 @@
     isPositive
       ? (currentOperand = "-" + currentOperand)
       : (currentOperand = currentOperand.slice(1, currentOperand.length));
-    updateOperand(currentOperand);
+    updateCurrentOperand(currentOperand);
+    displayNumber(currentOperand);
   }
 
-  // DISPLAY DATA
-  function updateOperand(currentOperand) {
-    const display = data.displayWindow;
-    display.textContent = currentOperand;
+  function updateCurrentOperand(currentOperand) {
     data.currentOperand = currentOperand;
   }
 
-  // function displayCalcResults(result) {
-  //   data.displayWindow.textContent = result;
-  // }
+  function displayNumber(result) {
+    data.displayWindow.textContent = result;
+  }
 
   // OPERATIONS
-  function performOperation(operation) {
-    const operand = Number(data.currentOperand.join("").slice(1));
+  function performOperation(operation, currentOperand) {
     const { operand1, operator } = data.calculation;
 
     if (operator === null) {
       if (operand1 === null) {
-        data.calculation.operand1 = operand;
+        data.calculation.operand1 = currentOperand;
         data.calculation.operator = operation;
         resetOperand();
       } else {
-        data.calculation.operand2 = operand;
+        data.calculation.operand2 = currentOperand;
         data.calculation.operator = operation;
       }
     } else {
-      data.calculation.operand2 = operand;
+      data.calculation.operand2 = currentOperand;
       processCalculation(operation);
-    }
-  }
-
-  function processMemory(key) {
-    console.log("Memory Key", key);
-  }
-
-  function totalCalulation() {
-    const { operand1 } = data.calculation;
-    if (operand1 === null) {
-      displayCalcResults(0);
-    } else if (operand1 !== null && data.currentOperand.length < 2) {
-      data.calculation.operand2 = operand1;
-      processCalculation(null);
-    } else {
-      const operand = Number(data.currentOperand.join("").slice(1));
-      data.calculation.operand2 = operand;
-      processCalculation(null);
+      console.log(data.calculation);
     }
   }
 
   function processCalculation(operation) {
-    data.calcResult = runCalc(data.calculation);
-    displayCalcResults(data.calcResult);
-    updateCalc(data.calcResult, operation);
+    const result = runCalculation(data.calculation);
+    displayNumber(result);
+    updateCalculationObj(result, operation);
     resetOperand();
   }
 
-  function runCalc({ operand1, operand2, operator }) {
+  function runCalculation({ operand1, operand2, operator }) {
     const equationComplete =
       operand1 !== null && operand2 !== null && operator !== null;
     let result = 0;
@@ -265,6 +244,24 @@
           break;
       }
       return result;
+    }
+  }
+
+  function processMemory(key) {
+    console.log("Memory Key", key);
+  }
+
+  function totalCalulation() {
+    const { operand1 } = data.calculation;
+    if (operand1 === null) {
+      displayNumber(0);
+    } else if (operand1 !== null && data.currentOperand.length < 2) {
+      data.calculation.operand2 = operand1;
+      processCalculation(null);
+    } else {
+      const operand = Number(data.currentOperand.join("").slice(1));
+      data.calculation.operand2 = operand;
+      processCalculation(null);
     }
   }
 
