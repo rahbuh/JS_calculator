@@ -142,14 +142,12 @@
         // totalCalulation(data.calculation);
         break;
       case "Backspace":
-        console.log("backspace");
         backspace(data.currentOperand);
         break;
       case "Delete":
         reset();
         break;
       case "neg":
-        console.log("negate");
         negate(data.currentOperand);
         break;
       default:
@@ -165,42 +163,33 @@
       if (input !== "." && noDecimalFound) {
         currentOperand = String(parseFloat(currentOperand));
       }
-      displayOperand(currentOperand);
-      data.currentOperand = currentOperand;
+      updateOperand(currentOperand);
       data.digitCount += 1;
     }
   }
 
   function backspace(currentOperand) {
-    operandLength = currentOperand.length;
+    let operandLength = currentOperand.length;
     operandLength < 2
       ? (currentOperand = "0")
-      : (currentOperand = currentOperand.slice(0, currentOperand.length - 1));
-    displayOperand(currentOperand);
-    data.currentOperand = currentOperand;
+      : (currentOperand = currentOperand.slice(0, operandLength - 1));
+    updateOperand(currentOperand);
     data.digitCount -= 1;
   }
 
-  function negate() {
-    const current = Number(data.currentOperand.join(""));
-    if (current !== 0) {
-      if (data.currentOperand.indexOf("-") === -1) {
-        data.currentOperand.splice(0, 1);
-        data.currentOperand = ["0", "-"].concat(data.currentOperand);
-      } else {
-        data.currentOperand.splice(0, 2);
-        data.currentOperand = ["0"].concat(data.currentOperand);
-      }
-      displayCalcResults(Number(data.currentOperand.join("").slice(1)));
-    } else {
-      displayCalcResults((data.calculation.operand1 *= -1));
-    }
+  function negate(currentOperand) {
+    const isPositive = currentOperand.indexOf("-") === -1;
+    isPositive
+      ? (currentOperand = "-" + currentOperand)
+      : (currentOperand = currentOperand.slice(1, currentOperand.length));
+    updateOperand(currentOperand);
   }
 
   // DISPLAY DATA
-  function displayOperand(dataToDisplay) {
+  function updateOperand(currentOperand) {
     const display = data.displayWindow;
-    display.textContent = dataToDisplay;
+    display.textContent = currentOperand;
+    data.currentOperand = currentOperand;
   }
 
   // function displayCalcResults(result) {
