@@ -106,7 +106,6 @@
       operand2: null,
       operator: operation
     };
-    console.log(data.calculation); // REMOVE
   }
 
   // PROCESS INPUT
@@ -141,8 +140,7 @@
         // processMemory(input);
         break;
       case "Enter":
-        console.log("enter");
-        // totalCalulation(data.calculation);
+        totalCalulation(data.calculation, data.currentOperand);
         break;
       case "Backspace":
         backspace(data.currentOperand);
@@ -185,13 +183,17 @@
   }
 
   function negate(currentOperand) {
-    const isPositive = currentOperand.indexOf("-") === -1;
+    let negative;
+    let operand = data.calculation.operand1;
 
-    isPositive
-      ? (currentOperand = "-" + currentOperand)
-      : (currentOperand = currentOperand.slice(1, currentOperand.length));
-    updateCurrentOperand(currentOperand);
-    displayNumber(currentOperand);
+    if (operand !== null && currentOperand === "0") {
+      negative = operand * -1;
+      data.calculation.operand1 = negative;
+    } else {
+      negative = currentOperand * -1;
+      updateCurrentOperand(negative);
+    }
+    displayNumber(negative);
   }
 
   function updateCurrentOperand(currentOperand) {
@@ -219,11 +221,14 @@
       data.calculation.operand2 = parseFloat(currentOperand);
       processCalculation(operation);
     }
+
+    console.log(data.calculation); // REMOVE
+    console.log(data.currentOperand); // REMOVE
   }
 
   function processCalculation(operation) {
-    console.log(data.calculation); // REMOVE
     let result = runCalculation(data.calculation);
+
     displayNumber(result);
     if (typeof result !== "number") {
       result = null;
@@ -326,7 +331,7 @@
     const wholeNum2 = convertToWholeNumber(num2, decimalCount2);
     const decimalPlaces = decimalCount1 + decimalCount2;
     let result = 0;
-   
+
     operation === "mult"
       ? (result = wholeNum1 * wholeNum2)
       : (result = wholeNum1 / wholeNum2);
@@ -366,17 +371,11 @@
     return result;
   }
 
-  function totalCalulation() {
-    const { operand1 } = data.calculation;
-    if (operand1 === null) {
-      displayNumber(0);
-    } else if (operand1 !== null && data.currentOperand.length < 2) {
-      data.calculation.operand2 = operand1;
-      processCalculation(null);
+  function totalCalulation(calculation, currentOperand) {
+    if (calculation.operand1 === null) {
+      data.currentOperand = currentOperand;
     } else {
-      const operand = Number(data.currentOperand.join("").slice(1));
-      data.calculation.operand2 = operand;
-      processCalculation(null);
+      performOperation(null, currentOperand);
     }
   }
 
@@ -386,7 +385,7 @@
 
   function clearMemory() {
     data.memory = "0";
-    console.log('Memory: ', data.memory)
+    console.log("Memory: ", data.memory);
   }
 
   init(keyObjs);
