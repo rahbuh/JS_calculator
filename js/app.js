@@ -36,6 +36,7 @@
       operand2: null,
       operator: null
     },
+    memory: "0",
     digitCount: 0
   };
 
@@ -55,6 +56,7 @@
   // MOUSE CLICK ACTION
   function clickAction(e) {
     const key = e.target;
+
     if (e.target.classList.value) {
       keyAnimation(key);
       processInput(key.getAttribute("data-key"));
@@ -64,6 +66,7 @@
   // KEY PRESS ACTION
   function keyPressAction(e) {
     const key = document.querySelector(`.key[data-key="${e.key}"]`);
+
     if (key) {
       keyAnimation(key);
       processInput(key.getAttribute("data-key"));
@@ -97,12 +100,13 @@
     data.currentOperand = "0";
   }
 
-  function updateCalculationObj(results, key) {
+  function updateCalculationObj(result, operation) {
     data.calculation = {
-      operand1: results,
+      operand1: result,
       operand2: null,
-      operator: key
+      operator: operation
     };
+    console.log(data.calculation); // REMOVE
   }
 
   // PROCESS INPUT
@@ -128,6 +132,8 @@
         performOperation(input, data.currentOperand);
         break;
       case "MemClear":
+        clearMemory();
+        break;
       case "MemRecall":
       case "MemPlus":
       case "MemMinus":
@@ -155,6 +161,7 @@
 
   function processNumber(input, currentOperand) {
     const noDecimalFound = currentOperand.indexOf(".") === -1;
+
     if (data.digitCount < 20) {
       currentOperand += input;
       if (input !== "." && noDecimalFound) {
@@ -168,6 +175,7 @@
 
   function backspace(currentOperand) {
     let operandLength = currentOperand.length;
+
     operandLength < 2
       ? (currentOperand = "0")
       : (currentOperand = currentOperand.slice(0, operandLength - 1));
@@ -178,6 +186,7 @@
 
   function negate(currentOperand) {
     const isPositive = currentOperand.indexOf("-") === -1;
+
     isPositive
       ? (currentOperand = "-" + currentOperand)
       : (currentOperand = currentOperand.slice(1, currentOperand.length));
@@ -199,23 +208,27 @@
 
     if (operator === null) {
       if (operand1 === null) {
-        data.calculation.operand1 = currentOperand;
+        data.calculation.operand1 = parseFloat(currentOperand);
         data.calculation.operator = operation;
         resetOperand();
       } else {
-        data.calculation.operand2 = currentOperand;
+        data.calculation.operand2 = parseFloat(currentOperand);
         data.calculation.operator = operation;
       }
     } else {
-      data.calculation.operand2 = currentOperand;
+      data.calculation.operand2 = parseFloat(currentOperand);
       processCalculation(operation);
-      console.log(data.calculation);
     }
   }
 
   function processCalculation(operation) {
-    const result = runCalculation(data.calculation);
+    console.log(data.calculation); // REMOVE
+    let result = runCalculation(data.calculation);
     displayNumber(result);
+    if (typeof result !== "number") {
+      result = null;
+      operation = null;
+    }
     updateCalculationObj(result, operation);
     resetOperand();
   }
@@ -247,22 +260,8 @@
     }
   }
 
-  function processMemory(key) {
-    console.log("Memory Key", key);
-  }
-
-  function totalCalulation() {
-    const { operand1 } = data.calculation;
-    if (operand1 === null) {
-      displayNumber(0);
-    } else if (operand1 !== null && data.currentOperand.length < 2) {
-      data.calculation.operand2 = operand1;
-      processCalculation(null);
-    } else {
-      const operand = Number(data.currentOperand.join("").slice(1));
-      data.calculation.operand2 = operand;
-      processCalculation(null);
-    }
+  function calculate(operand1, operand2, calcFn) {
+    return calcFn(operand1, operand2);
   }
 
   function add(addend1, addend2) {
@@ -303,19 +302,16 @@
     }
   }
 
-  function calculate(num1, num2, fn) {
-    return fn(num1, num2);
-  }
-
   function isFloat(num) {
     return String(num).indexOf(".") !== -1;
   }
 
   function addOrSubFloat(num1, num2, operation) {
     const decimalPlaces = findMaxDecimalPlaces(num1, num2);
+    const wholeNum1 = convertToWholeNumber(num1, decimalPlaces);
+    const wholeNum2 = convertToWholeNumber(num2, decimalPlaces);
     let result = 0;
-    let wholeNum1 = convertToWholeNumber(num1, decimalPlaces);
-    let wholeNum2 = convertToWholeNumber(num2, decimalPlaces);
+
     operation === "add"
       ? (result = wholeNum1 + wholeNum2)
       : (result = wholeNum1 - wholeNum2);
@@ -326,10 +322,11 @@
   function multOrDivFloat(num1, num2, operation) {
     const decimalCount1 = countDecimalPlaces(String(num1));
     const decimalCount2 = countDecimalPlaces(String(num2));
+    const wholeNum1 = convertToWholeNumber(num1, decimalCount1);
+    const wholeNum2 = convertToWholeNumber(num2, decimalCount2);
     const decimalPlaces = decimalCount1 + decimalCount2;
     let result = 0;
-    let wholeNum1 = convertToWholeNumber(num1, decimalCount1);
-    let wholeNum2 = convertToWholeNumber(num2, decimalCount2);
+   
     operation === "mult"
       ? (result = wholeNum1 * wholeNum2)
       : (result = wholeNum1 / wholeNum2);
@@ -338,7 +335,6 @@
   }
 
   function findMaxDecimalPlaces(num1, num2) {
-    console.log("findMaxDecimalPlaces:", num1, num2);
     return Math.max(
       countDecimalPlaces(String(num1)),
       countDecimalPlaces(String(num2))
@@ -368,6 +364,29 @@
       }
     }
     return result;
+  }
+
+  function totalCalulation() {
+    const { operand1 } = data.calculation;
+    if (operand1 === null) {
+      displayNumber(0);
+    } else if (operand1 !== null && data.currentOperand.length < 2) {
+      data.calculation.operand2 = operand1;
+      processCalculation(null);
+    } else {
+      const operand = Number(data.currentOperand.join("").slice(1));
+      data.calculation.operand2 = operand;
+      processCalculation(null);
+    }
+  }
+
+  function processMemory(key) {
+    console.log("Memory Key", key);
+  }
+
+  function clearMemory() {
+    data.memory = "0";
+    console.log('Memory: ', data.memory)
   }
 
   init(keyObjs);
