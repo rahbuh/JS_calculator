@@ -21,81 +21,117 @@ body {
 
 h1 {
   text-align: center;
-  margin: 0 0 1rem;
   color: var(--white);
 }
 
 #main {
   background-color: var(--main-bkgrd);
   border: 1px solid var(--border);
-  width: 340px;
-  margin: 20px auto;
-  padding-top: 10px;
+  width: 300px;
+  margin: 0 auto;
 }
 
 #calculator {
   border-radius: 5px;
-  width: 330px;
-  font-size: 1.25rem;
+  width: 280px;
+  font-size: 1rem;
   margin: 0 auto;
-  padding: 5px;
-}
-
-#display {
-  text-align: right;
-  margin: 0 5px;
-  padding: 5px;
-}
-
-#key-wrapper {
-  display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, 68px);
-  justify-content: center;
-  margin: 20px 0;
 }
 
 #display {
   background-color: var(--dark-display);
   border: 2px solid var(--border);
-  height: 40px;
+  text-align: right;
   color: var(--white);
+  padding: 5px;
 }
 
-.key {
-  background-color: var(--white-bkgrd);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-
-  box-shadow: 1px 1px 8px var(--dark-shadow);
+#key-wrapper {
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(auto-fill, 60px);
+  justify-content: center;
+  margin: 15px 0;
 }
 
 .key {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.05s ease;
+  background-color: var(--white-bkgrd);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  box-shadow: 1px 1px 8px var(--dark-shadow);
+  transition: none;
   cursor: pointer;
 }
 
 .single {
-  width: 68px;
-  height: 68px;
+  width: 60px;
+  height: 60px;
 }
 
 .double {
-  width: 146px;
-  height: 68px;
+  width: 128px;
+  height: 60px;
 }
 
 .key-clicked {
-  transform: scale(0.95);
-  border: 2px solid var(--dark-bkgrd);
-  box-shadow: 0 0 3px var(--light-shadow);
+  transform: none;
 }
 
-.key:hover,
-.key-clicked {
+.key:hover {
   background-color: var(--dark-bkgrd);
   color: var(--white);
+}
+
+@media only screen and (min-width: 480px) {
+  h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  #main {
+    width: 340px;
+    margin: 20px auto;
+    padding-top: 10px;
+  }
+
+  #calculator {
+    width: 330px;
+    font-size: 1.25rem;
+    padding: 5px;
+  }
+
+  #display {
+    margin: 0 5px;
+  }
+
+  #key-wrapper {
+    grid-gap: 10px;
+    grid-template-columns: repeat(auto-fill, 68px);
+    margin: 20px 0;
+  }
+
+  .key {
+    box-shadow: 1px 1px 8px var(--dark-shadow);
+    transition: all 0.05s ease;
+  }
+
+  .single {
+    width: 68px;
+    height: 68px;
+  }
+
+  .double {
+    width: 146px;
+    height: 68px;
+  }
+
+  .key-clicked {
+    background-color: var(--dark-bkgrd);
+    border: 2px solid var(--dark-bkgrd);
+    box-shadow: 0 0 3px var(--light-shadow);
+    color: var(--white);
+    transform: scale(0.95);
+  }
 }
