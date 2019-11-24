@@ -121,8 +121,10 @@
       case "7":
       case "8":
       case "9":
-      case ".":
         processNumber(input, data.currentOperand);
+        break;
+      case ".":
+        processDecimal(input, data.currentOperand);
         break;
       case "+":
       case "-":
@@ -159,16 +161,28 @@
   }
 
   function processNumber(input, currentOperand) {
-    const noDecimalFound = currentOperand.indexOf(".") === -1;
+    const decimalFound = currentOperand.indexOf(".") !== -1;
 
     if (data.digitCount < 20) {
       currentOperand += input;
-      if (input !== "." && noDecimalFound) {
+      if (!decimalFound) {
         currentOperand = String(parseFloat(currentOperand));
       }
       updateCurrentOperand(currentOperand);
       displayNumber(currentOperand);
       data.digitCount += 1;
+    }
+  }
+
+  function processDecimal(input, currentOperand) {
+    const decimalFound = currentOperand.indexOf(".") !== -1;
+
+    if (decimalFound) {
+      return;
+    } else {
+      currentOperand += input;
+      updateCurrentOperand(currentOperand);
+      displayNumber(currentOperand);
     }
   }
 
