@@ -36,7 +36,7 @@
       operand2: null,
       operator: null
     },
-    memory: "0",
+    memory: 0,
     digitCount: 0
   };
 
@@ -134,10 +134,11 @@
         clearMemory();
         break;
       case "MemRecall":
+        recallMemory();
+        break;
       case "MemPlus":
       case "MemMinus":
-        console.log("memory: ", input);
-        // processMemory(input);
+        addSubMemory(input);
         break;
       case "Enter":
         totalCalulation(data.calculation, data.currentOperand);
@@ -221,9 +222,6 @@
       data.calculation.operand2 = parseFloat(currentOperand);
       processCalculation(operation);
     }
-
-    console.log(data.calculation); // REMOVE
-    console.log(data.currentOperand); // REMOVE
   }
 
   function processCalculation(operation) {
@@ -379,13 +377,24 @@
     }
   }
 
-  function processMemory(key) {
-    console.log("Memory Key", key);
+  function recallMemory() {
+    const { operator } = data.calculation;
+    data.displayWindow.textContent = data.memory;
+
+    !operator
+      ? (data.calculation.operand1 = data.memory)
+      : (data.currentOperand = String(data.memory));
+  }
+
+  function addSubMemory(input) {
+    input === "MemPlus"
+      ? (data.memory += Number(data.displayWindow.textContent))
+      : (data.memory -= Number(data.displayWindow.textContent));
+    resetOperand();
   }
 
   function clearMemory() {
-    data.memory = "0";
-    console.log("Memory: ", data.memory);
+    data.memory = 0;
   }
 
   init(keyObjs);
