@@ -1,11 +1,11 @@
 :root {
   --white-bkgrd: #f5f5f6;
-  --dark-bkgrd: #7575a3;
-  --main-bkgrd: #b3b3cc;
+  --dark-bkgrd: #999999;
+  --main-bkgrd: #e6e6e6;
   --dark-display: #1a1a1a;
   --white: #fff;
-  --border: #a6a6a6;
-  --dark-shadow: #444;
+  --border: #d1d1e0;
+  --dark-shadow: #666;
   --light-shadow: #999;
 }
 
@@ -26,7 +26,6 @@ h1 {
 
 #main {
   background-color: var(--main-bkgrd);
-  border: 1px solid var(--border);
   width: 300px;
   margin: 0 auto;
 }
@@ -39,10 +38,9 @@ h1 {
 }
 
 #display {
-  background-color: var(--dark-display);
-  border: 2px solid var(--border);
+  border-bottom: 1px solid var(--dark-shadow);
   text-align: right;
-  color: var(--white);
+  color: var(--dark-display);
   padding: 5px;
 }
 

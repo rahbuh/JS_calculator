@@ -2,32 +2,6 @@
   // ADD EVENT LISTENER FOR KEY PRESS
   document.addEventListener("keyup", keyPressAction);
 
-  const keyObjs = [
-    { keyname: "MemClear", keytext: "MC", classes: ["key", "single"] },
-    { keyname: "MemRecall", keytext: "MR", classes: ["key", "single"] },
-    { keyname: "MemPlus", keytext: "M+", classes: ["key", "single"] },
-    { keyname: "MemMinus", keytext: "M-", classes: ["key", "single"] },
-    { keyname: 7, keytext: 7, classes: ["key", "single"] },
-    { keyname: 8, keytext: 8, classes: ["key", "single"] },
-    { keyname: 9, keytext: 9, classes: ["key", "single"] },
-    { keyname: "/", keytext: "/", classes: ["key", "single"] },
-    { keyname: 4, keytext: 4, classes: ["key", "single"] },
-    { keyname: 5, keytext: 5, classes: ["key", "single"] },
-    { keyname: 6, keytext: 6, classes: ["key", "single"] },
-    { keyname: "*", keytext: "*", classes: ["key", "single"] },
-    { keyname: 1, keytext: 1, classes: ["key", "single"] },
-    { keyname: 2, keytext: 2, classes: ["key", "single"] },
-    { keyname: 3, keytext: 3, classes: ["key", "single"] },
-    { keyname: "+", keytext: "+", classes: ["key", "single"] },
-    { keyname: "neg", keytext: "+/-", classes: ["key", "single"] },
-    { keyname: 0, keytext: 0, classes: ["key", "single"] },
-    { keyname: ".", keytext: ".", classes: ["key", "single"] },
-    { keyname: "-", keytext: "-", classes: ["key", "single"] },
-    { keyname: "Delete", keytext: "C", classes: ["key", "single"] },
-    { keyname: "Backspace", keytext: "back", classes: ["key", "single"] },
-    { keyname: "Enter", keytext: "=", classes: ["key", "double"] }
-  ];
-
   const data = {
     displayWindow: document.querySelector("#display"),
     currentOperand: "0",
@@ -40,17 +14,9 @@
     digitCount: 0
   };
 
-  function init(keyList) {
+  function init() {
     const wrapper = document.querySelector("#key-wrapper");
     wrapper.addEventListener("click", clickAction);
-
-    for (let key of keyList) {
-      const box = document.createElement("div");
-      box.classList.add(...key["classes"]);
-      box.setAttribute("data-key", key["keyname"]);
-      box.innerText = key["keytext"];
-      wrapper.appendChild(box);
-    }
   }
 
   // MOUSE CLICK ACTION
@@ -411,5 +377,5 @@
     data.memory = 0;
   }
 
-  init(keyObjs);
+  init();
 })();
