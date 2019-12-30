@@ -1,8 +1,20 @@
 (function() {
-  const isMobile = isMobileDevice();
-
-  // ADD EVENT LISTENER FOR KEY PRESS
+  // EVENT LISTENER FOR KEY PRESS
   document.addEventListener("keyup", keyPressAction);
+
+  const isMobile = isMobileDevice();
+  const data = {
+    displayWindow: document.querySelector("#display"),
+    currentOperand: "0",
+    calculation: {
+      operand1: null,
+      operand2: null,
+      operator: null
+    },
+    memory: 0,
+    digitCount: 0,
+    calcResult: 0
+  };
 
   function init() {
     const keys = document.querySelectorAll("div[data-key]");
@@ -34,9 +46,7 @@
       if (!isMobile) {
         keyAnimation(keyElement);
       }
-
-      console.log(key);
-      // processInput(key.getAttribute("data-key"));
+      processInput(key);
     }
   }
 
@@ -51,6 +61,7 @@
     this.classList.remove("key-clicked");
   }
 
+  // TEST IF DISPLAYING ON MOBILE DEVICE
   function isMobileDevice() {
     return (
       typeof window.orientation !== "undefined" ||
@@ -58,13 +69,107 @@
     );
   }
 
-  init();
+  function processNumber(input, { currentOperand, digitCount }) {
+    const decimalFound = currentOperand.indexOf(".") !== -1;
 
+    if (digitCount < 20) {
+      currentOperand += input;
+      digitCount += 1;
+
+      if (!decimalFound) {
+        currentOperand = String(parseFloat(currentOperand));
+      }
+
+      displayNumber(currentOperand);
+      data.currentOperand = currentOperand;
+      data.digitCount = digitCount;
+    }
+  }
+
+  function processDecimal(input, { currentOperand }) {
+    const decimalFound = currentOperand.indexOf(".") !== -1;
+
+    if (decimalFound) {
+      return;
+    } else {
+      currentOperand += input;
+      displayNumber(currentOperand);
+      data.currentOperand = currentOperand;
+    }
+  }
+
+  function backspace({ currentOperand, digitCount }) {
+    let operandLength = currentOperand.length;
+
+    operandLength < 2
+      ? (currentOperand = "0")
+      : (currentOperand = currentOperand.slice(0, operandLength - 1));
+
+    digitCount -= 1;
+    displayNumber(currentOperand);
+    data.currentOperand = currentOperand;
+    data.digitCount = digitCount;
+  }
+
+  function displayNumber(result) {
+    data.displayWindow.textContent = result;
+  }
+
+  // PROCESS INPUT
+  function processInput(input) {
+    switch (input) {
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+        processNumber(input, data);
+        break;
+      case ".":
+        processDecimal(input, data);
+        break;
+      case "+":
+      case "-":
+      case "*":
+      case "/":
+        console.log("Operator: ", input);
+        break;
+      case "mem-clear":
+        console.log("Memory: ", input);
+        break;
+      case "mem-recall":
+        console.log("Memory: ", input);
+        break;
+      case "mem-plus":
+      case "mem-minus":
+        console.log("Memory: ", input);
+        break;
+      case "Enter":
+        console.log("Enter: ", input);
+        break;
+      case "Backspace":
+        backspace(data);
+        break;
+      case "Delete":
+        console.log("Delete: ", input);
+        break;
+      case "negate":
+        console.log("Negate: ", input);
+        break;
+      default:
+        break;
+    }
+  }
+
+  init();
 })();
 
 // (function() {
-//   // ADD EVENT LISTENER FOR KEY PRESS
-//   document.addEventListener("keyup", keyPressAction);
 
 //   const data = {
 //     displayWindow: document.querySelector("#display"),
@@ -77,42 +182,6 @@
 //     memory: 0,
 //     digitCount: 0
 //   };
-
-//   function init() {
-//     const wrapper = document.querySelector("#key-wrapper");
-//     wrapper.addEventListener("click", clickAction);
-//   }
-
-//   // MOUSE CLICK ACTION
-//   function clickAction(e) {
-//     const key = e.target;
-
-//     if (e.target.classList.value) {
-//       keyAnimation(key);
-//       processInput(key.getAttribute("data-key"));
-//     }
-//   }
-
-//   // KEY PRESS ACTION
-//   function keyPressAction(e) {
-//     const key = document.querySelector(`.key[data-key="${e.key}"]`);
-
-//     if (key) {
-//       keyAnimation(key);
-//       processInput(key.getAttribute("data-key"));
-//     }
-//   }
-
-//   // KEY ANIMATION
-//   function keyAnimation(key) {
-//     key.classList.add("key-clicked");
-//     key.addEventListener("transitionend", removeTransition);
-//   }
-
-//   function removeTransition(e) {
-//     if (e.propertyName !== "transform") return;
-//     this.classList.remove("key-clicked");
-//   }
 
 //   // RESETS
 //   function reset() {
@@ -190,43 +259,6 @@
 //     }
 //   }
 
-//   function processNumber(input, currentOperand) {
-//     const decimalFound = currentOperand.indexOf(".") !== -1;
-
-//     if (data.digitCount < 20) {
-//       currentOperand += input;
-//       if (!decimalFound) {
-//         currentOperand = String(parseFloat(currentOperand));
-//       }
-//       updateCurrentOperand(currentOperand);
-//       displayNumber(currentOperand);
-//       data.digitCount += 1;
-//     }
-//   }
-
-//   function processDecimal(input, currentOperand) {
-//     const decimalFound = currentOperand.indexOf(".") !== -1;
-
-//     if (decimalFound) {
-//       return;
-//     } else {
-//       currentOperand += input;
-//       updateCurrentOperand(currentOperand);
-//       displayNumber(currentOperand);
-//     }
-//   }
-
-//   function backspace(currentOperand) {
-//     let operandLength = currentOperand.length;
-
-//     operandLength < 2
-//       ? (currentOperand = "0")
-//       : (currentOperand = currentOperand.slice(0, operandLength - 1));
-//     updateCurrentOperand(currentOperand);
-//     displayNumber(currentOperand);
-//     data.digitCount -= 1;
-//   }
-
 //   function negate(currentOperand) {
 //     let negative;
 //     let operand = data.calculation.operand1;
@@ -239,14 +271,6 @@
 //       updateCurrentOperand(negative);
 //     }
 //     displayNumber(negative);
-//   }
-
-//   function updateCurrentOperand(currentOperand) {
-//     data.currentOperand = currentOperand;
-//   }
-
-//   function displayNumber(result) {
-//     data.displayWindow.textContent = result;
 //   }
 
 //   // OPERATIONS
