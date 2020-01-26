@@ -179,12 +179,10 @@
     data.currentOperand = currentOperand;
   }
 
-  function processOperator(input, data) {
-    const { operand1 } = data.calculation;
-    const { currentOperand } = data;
+  function processOperator(input, { currentOperand }) {
     let result;
 
-    if (operand1 === null) {
+    if (data.calculation.operand1 === null) {
       updateCalcValues(currentOperand, input);
     } else {
       result = runCalculation(currentOperand);
