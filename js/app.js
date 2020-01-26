@@ -89,7 +89,8 @@
       case "-":
       case "*":
       case "/":
-        console.log("Operator: ", input);
+        processOperator(input, data);
+        // console.log("Operator: ", input);
         break;
       case "mem-clear":
         console.log("Memory: ", input);
@@ -112,7 +113,6 @@
         break;
       case "negate":
         negate(data);
-        // console.log("Negate: ", input);
         break;
       default:
         break;
@@ -177,6 +177,36 @@
 
     displayNumber(currentOperand);
     data.currentOperand = currentOperand;
+  }
+
+  function processOperator(input, data) {
+    const { operand1 } = data.calculation;
+    const { currentOperand } = data;
+    let result;
+
+    if (operand1 === null) {
+      updateCalcValues(currentOperand, input);
+    } else {
+      result = runCalculation(currentOperand);
+      displayNumber(result);
+      updateCalcValues(result, input);
+    }
+
+    console.log("process: ", data.calculation);
+  }
+
+  function updateCalcValues(operandValue, input) {
+    data.calculation.operand1 = operandValue;
+    data.calculation.operand2 = null;
+    data.calculation.operator = input;
+    data.currentOperand = "0";
+    data.digitCount = 0;
+  }
+
+  function runCalculation(currentOperand) {
+    data.calculation.operand2 = currentOperand;
+    console.log("run calc: ", data.calculation);
+    return "1000";
   }
 
   init();
