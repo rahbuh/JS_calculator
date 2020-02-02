@@ -1,8 +1,4 @@
 (function() {
-  // EVENT LISTENER FOR KEY PRESS
-  document.addEventListener("keyup", keyPressAction);
-
-  const keys = document.querySelectorAll("div[data-key]");
   const isMobile = isMobileDevice();
 
   const data = {
@@ -18,11 +14,17 @@
     calcResult: 0
   };
 
-  function init() {
-    addListeners(keys);
+  // TEST IF DISPLAYING ON MOBILE DEVICE
+  function isMobileDevice() {
+    return (
+      typeof window.orientation !== "undefined" ||
+      navigator.userAgent.indexOf("IEMobile") !== -1
+    );
   }
 
-  function addListeners(keys) {
+  function initEventListeners() {
+    document.addEventListener("keyup", keyPressAction);
+    const keys = document.querySelectorAll("div[data-key]");
     for (let key of keys) {
       key.addEventListener("click", clickAction);
     }
@@ -31,6 +33,9 @@
   // MOUSE CLICK ACTION
   function clickAction(e) {
     const keyElement = e.target;
+    if (!isMobile) {
+      keyAnimation(keyElement);
+    }
     processInput(keyElement);
   }
 
@@ -38,6 +43,9 @@
   function keyPressAction(e) {
     const keyElement = document.querySelector(`.key[data-key="${e.key}"]`);
     if (keyElement) {
+      if (!isMobile) {
+        keyAnimation(keyElement);
+      }
       processInput(keyElement);
     }
   }
@@ -53,22 +61,9 @@
     this.classList.remove("key-clicked");
   }
 
-  // TEST IF DISPLAYING ON MOBILE DEVICE
-  function isMobileDevice() {
-    return (
-      typeof window.orientation !== "undefined" ||
-      navigator.userAgent.indexOf("IEMobile") !== -1
-    );
-  }
-
   // PROCESS INPUT
   function processInput(keyElement) {
     const input = keyElement.dataset.key;
-
-    if (!isMobile) {
-      keyAnimation(keyElement);
-    }
-
     switch (input) {
       case "0":
       case "1":
@@ -128,8 +123,7 @@
       currentOperand === "0"
         ? (currentOperand = input)
         : (currentOperand += input);
-
-      digitCount += 1;
+      digitCount++;
       displayNumber(currentOperand);
       data.currentOperand = currentOperand;
       data.digitCount = digitCount;
@@ -138,7 +132,6 @@
 
   function processDecimal(input, { currentOperand, digitCount }) {
     const decimalFound = currentOperand.indexOf(".") !== -1;
-
     if (!decimalFound && digitCount < 20) {
       currentOperand += input;
       displayNumber(currentOperand);
@@ -148,11 +141,9 @@
 
   function backspace({ currentOperand, digitCount }) {
     let operandLength = currentOperand.length;
-
     operandLength < 2
       ? (currentOperand = "0")
       : (currentOperand = currentOperand.slice(0, operandLength - 1));
-
     digitCount -= 1;
     displayNumber(currentOperand);
     data.currentOperand = currentOperand;
@@ -174,14 +165,12 @@
     currentOperand[0] === "-"
       ? (currentOperand = currentOperand.slice(1))
       : (currentOperand = "-" + currentOperand);
-
     displayNumber(currentOperand);
     data.currentOperand = currentOperand;
   }
 
   function processOperator(input, { currentOperand }) {
     let result;
-
     if (data.calculation.operand1 === null) {
       updateCalcValues(currentOperand, input);
     } else {
@@ -207,5 +196,5 @@
     return "1000";
   }
 
-  init();
+  initEventListeners();
 })();
