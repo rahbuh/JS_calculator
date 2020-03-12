@@ -134,18 +134,17 @@
 
   function negate({ display }) {
     let number = display.textContent;
-    number[0] === "-" ? (number = number.slice(1)) : (number = "-" + number);
-    display.textContent = number;
+    if (number !== "0") {
+      number[0] === "-" ? (number = number.slice(1)) : (number = "-" + number);
+      display.textContent = number;
+    }
   }
 
   function displayNumber(result) {
     data.displayWindow.textContent = result;
   }
 
-  calculate()
-
-
-
+  console.log(math.calculate())
 
   // function processOperator(input, { currentOperand }) {
   //   let result;
