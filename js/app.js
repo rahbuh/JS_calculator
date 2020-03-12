@@ -21,18 +21,41 @@
   }
 
   function initEventListeners() {
-    // document.addEventListener("keyup", keyPressAction);
-    for (let key of document.getElementsByClassName("number")) {
-      key.addEventListener("click", handleNumberKey);
+    addListener("number", handleNumberKey);
+    addListener("operator", handleOperatorKey);
+    addListener("action", handleActionKey);
+    addListener("memory", handleMemoryKey);
+    document.addEventListener("keypress", keyPressAction);
+  }
+
+  function addListener(keyType, fn) {
+    for (let key of document.getElementsByClassName(keyType)) {
+      key.addEventListener("click", e => {
+        if (!isMobileDevice()) {
+          keyAnimation(e.target);
+        }
+        fn(e.target.dataset.key)
+      });
     }
-    for (let key of document.getElementsByClassName("operator")) {
-      key.addEventListener("click", handleOperatorKey);
-    }
-    for (let key of document.getElementsByClassName("action")) {
-      key.addEventListener("click", handleActionKey);
-    }
-    for (let key of document.getElementsByClassName("memory")) {
-      key.addEventListener("click", handleMemoryKey);
+  }
+
+  // HANDLE KEYBOARD INPUT
+  function keyPressAction(e) {
+    const input = document.querySelector(`.key[data-key="${e.key}"]`);
+    if (input) {
+      const classInfo = [...input.classList];
+      if (classInfo.indexOf("number") !== -1) {
+        handleNumberKey(input.dataset.key);
+      }
+      if (classInfo.indexOf("operator") !== -1) {
+        handleOperatorKey(input.dataset.key);
+      }
+      if (classInfo.indexOf("action") !== -1) {
+        handleActionKey(input.dataset.key);
+      }
+      if (classInfo.indexOf("memory") !== -1) {
+        console.log("Memory");
+      }
     }
   }
 
@@ -47,13 +70,9 @@
     this.classList.remove("key-clicked");
   }
 
-  function handleNumberKey(e) {
-    const input = e.target.dataset.key;
+  function handleNumberKey(input) {
     let { display, digitCount } = data;
 
-    if (!isMobileDevice()) {
-      keyAnimation(e.target);
-    }
     if (digitCount < 20) {
       if (input === ".") {
         if (display.textContent.indexOf(".") === -1) {
@@ -68,18 +87,11 @@
     }
   }
 
-  function handleOperatorKey(e) {
-    console.log(e.target.dataset.key);
-    if (!isMobileDevice()) {
-      keyAnimation(e.target);
-    }
+  function handleOperatorKey(input) {
+    console.log(input);
   }
 
-  function handleActionKey(e) {
-    const input = e.target.dataset.key;
-    if (!isMobileDevice()) {
-      keyAnimation(e.target);
-    }
+  function handleActionKey(input) {
     if (input === "Backspace" && data.digitCount > 0) {
       backspace(data);
     }
@@ -91,13 +103,9 @@
     }
   }
 
-  function handleMemoryKey(e) {
-    const input = e.target.dataset.key;
+  function handleMemoryKey(input) {
     const { display } = data;
 
-    if (!isMobileDevice()) {
-      keyAnimation(e.target);
-    }
     if (input === "mem-clear") {
       data.memory = 0;
     }
@@ -110,7 +118,6 @@
     if (input === "mem-minus") {
       data.memory -= parseFloat(display.textContent);
     }
-    // console.log(data.memory)
   }
 
   function backspace({ display, digitCount }) {
@@ -144,7 +151,7 @@
     data.displayWindow.textContent = result;
   }
 
-  console.log(math.calculate())
+  console.log(math.calculate());
 
   // function processOperator(input, { currentOperand }) {
   //   let result;
