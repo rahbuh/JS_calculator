@@ -71,18 +71,19 @@ h1 {
   height: 60px;
 }
 
-.dark {
+.memory {
   background-color: var(--dark-display);
   border: 1px solid var(--dark-shadow);
   color: var(--white);
 }
 
-.white {
+.number,
+.action {
   background-color: var(--white);
   border: 1px solid var(--border);
 }
 
-.gray {
+.operator {
   background-color: var(--gray-bkgrd);
   border: 1px solid var(--dark-bkgrd);
 }
