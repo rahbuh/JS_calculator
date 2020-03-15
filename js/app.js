@@ -1,15 +1,14 @@
 (function() {
   const data = {
     display: document.querySelector("#display"),
-    currentOperand: "0",
     calculation: {
       operand1: null,
       operand2: null,
       operator: null
     },
+    currentOperand: null,
     memory: 0,
-    digitCount: 0,
-    calcResult: 0
+    digitCount: 0
   };
 
   // TEST IF DISPLAYING ON MOBILE DEVICE
@@ -34,7 +33,7 @@
         if (!isMobileDevice()) {
           keyAnimation(e.target);
         }
-        fn(e.target.dataset.key)
+        fn(e.target.dataset.key);
       });
     }
   }
@@ -71,126 +70,158 @@
   }
 
   function handleNumberKey(input) {
-    let { display, digitCount } = data;
+    let { currentOperand, digitCount } = data;
 
-    if (digitCount < 20) {
-      if (input === ".") {
-        if (display.textContent.indexOf(".") === -1) {
-          display.textContent += input;
-        }
+    if (currentOperand) {
+      if (input === "." && currentOperand.indexOf(".") !== -1) {
+        return;
+      } else if (
+        input === "0" &&
+        currentOperand.length === 1 &&
+        currentOperand === "0"
+      ) {
+        return;
       } else {
-        display.textContent === "0"
-          ? (display.textContent = input)
-          : (display.textContent += input);
+        currentOperand === "0"
+          ? (currentOperand = input)
+          : (currentOperand += input);
       }
-      data.digitCount = digitCount + 1;
+    } else {
+      if (input === ".") {
+        input = "0.";
+      }
+      currentOperand = input;
     }
+
+    updateData(currentOperand, digitCount + 1);
+    displayNumber(currentOperand);
+  }
+
+  function displayNumber(number) {
+    data.display.textContent = number;
+  }
+
+  function updateData(...args) {
+    data.currentOperand = args[0];
+    if (args[1] !== undefined) {
+      data.digitCount = args[1];
+    }
+    console.log(data);
   }
 
   function handleOperatorKey(input) {
-    console.log(input);
+    let { operand1, operand2, operator } = data.calculation;
+    let displayContent = data.display.textContent;
+
+    if (operator !== "=") {
+      if (!operand1) {
+        operand1 = displayContent;
+        operator = input;
+        displayContent = "";
+      }
+      if (operand2 !== null && operator) {
+        operand2 = displayContent;
+        operand1 = displayContent = runCalculation(
+          operand1,
+          operand2,
+          operator
+        );
+        operator = input;
+      }
+      setDataValues(displayContent, operand1, operand2, operator);
+      console.log(data.calculation);
+    } else {
+      console.log("equals");
+    }
   }
 
   function handleActionKey(input) {
-    if (input === "Backspace" && data.digitCount > 0) {
-      backspace(data);
-    }
-    if (input === "Delete") {
-      reset();
+    const { currentOperand, digitCount } = data;
+
+    if (input === "Backspace" && digitCount > 0) {
+      backspace(currentOperand, digitCount);
     }
     if (input === "negate") {
-      negate(data);
+      negate(currentOperand);
+    }
+    if (input === "Delete") {
+      resetDataValues();
     }
   }
 
   function handleMemoryKey(input) {
-    const { display } = data;
-
+    let displayContent = data.display.textContent;
+    let memory = data.memory;
     if (input === "mem-clear") {
-      data.memory = 0;
+      memory = 0;
     }
     if (input === "mem-recall") {
-      display.textContent = String(data.memory);
+      displayContent = String(memory);
     }
     if (input === "mem-plus") {
-      data.memory += parseFloat(display.textContent);
+      memory += parseFloat(displayContent);
+      // fix calculation
     }
     if (input === "mem-minus") {
-      data.memory -= parseFloat(display.textContent);
+      memory -= parseFloat(displayContent);
+      // fix calculation
+    }
+
+    data.memory = memory;
+    data.display.textContent = displayContent;
+  }
+
+  function backspace(current, digitCount) {
+    const operandLength = current.length;
+
+    if (operandLength < 2 || (operandLength === 2 && current[0] === "-")) {
+      current = "0";
+      digitCount = 0;
+    } else {
+      current = current.slice(0, operandLength - 1);
+      digitCount -= 1;
+    }
+
+    updateData(current, digitCount);
+    displayNumber(current);
+  }
+
+  function negate(current) {
+    if (current && current !== "0") {
+      current[0] === "-"
+        ? (current = current.slice(1))
+        : (current = `-${current}`);
+
+      updateData(current);
+      displayNumber(current);
     }
   }
 
-  function backspace({ display, digitCount }) {
-    const operandLength = display.textContent.length;
-    operandLength < 2
-      ? (display.textContent = "0")
-      : (display.textContent = display.textContent.slice(0, operandLength - 1));
-    data.digitCount = digitCount - 1;
-  }
-
-  function reset() {
+  function resetDataValues() {
     data.display.textContent = 0;
-    data.currentOperand = "0";
     data.calculation = {
       operand1: null,
       operand2: null,
       operator: null
     };
+    data.currentOperand = null;
     data.digitCount = 0;
   }
 
-  function negate({ display }) {
-    let number = display.textContent;
-    if (number !== "0") {
-      number[0] === "-" ? (number = number.slice(1)) : (number = "-" + number);
-      display.textContent = number;
-    }
+  function setDataValues(displayContent, operand1, operand2, operator) {
+    data.display.textContent = displayContent;
+    data.calculation = {
+      operand1,
+      operand2,
+      operator
+    };
+    data.digitCount = 0;
   }
 
-  function displayNumber(result) {
-    data.displayWindow.textContent = result;
+  function runCalculation(operand1, operand2, operator) {
+    console.log({ operand1, operand2, operator });
+    return 42;
   }
-
-  console.log(math.calculate());
-
-  // function processOperator(input, { currentOperand }) {
-  //   let result;
-  //   if (data.calculation.operand1 === null) {
-  //     updateCalcValues(currentOperand, input);
-  //   } else {
-  //     result = runCalculation(currentOperand, data.calculation);
-  //     displayNumber(result);
-  //     updateCalcValues(result, input);
-  //   }
-  //   // console.log("process: ", data.calculation);
-  // }
-
-  // function updateCalcValues(operandValue, input) {
-  //   data.calculation.operand1 = operandValue;
-  //   data.calculation.operand2 = null;
-  //   data.calculation.operator = input;
-  //   data.currentOperand = "0";
-  //   data.digitCount = 0;
-  // }
-
-  // function runCalculation(currentOperand, { operand1, operator }) {
-  //   let result;
-  //   const num1 = parseFloat(operand1);
-  //   const num2 = parseFloat(currentOperand);
-
-  //   switch (operator) {
-  //     case "+":
-  //       return num1 + num2;
-  //     case "-":
-  //       return num1 - num2;
-  //     case "*":
-  //       return num1 * num2;
-  //     case "/":
-  //       return num1 / num2;
-  //     default:
-  //       return "error";
-  //   }
-  // }
 
   initEventListeners();
 })();
