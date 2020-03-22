@@ -71,29 +71,34 @@
 
   function handleNumberKey(input) {
     let { currentOperand, digitCount } = data;
-
-    if (currentOperand) {
-      if (input === "." && currentOperand.indexOf(".") !== -1) {
-        return;
-      } else if (
-        input === "0" &&
-        currentOperand.length === 1 &&
-        currentOperand === "0"
-      ) {
-        return;
+    if (digitCount < 20) {
+      if (currentOperand) {
+        if (currentOperand === "0" && input !== ".") {
+          currentOperand = input;
+          digitCount = 1;
+        } else if (input === ".") {
+          if (currentOperand.indexOf(".") === -1) {
+            currentOperand += input;
+            digitCount += 1;
+          }
+        } else {
+          currentOperand += input;
+          digitCount += 1;
+        }
       } else {
-        currentOperand === "0"
-          ? (currentOperand = input)
-          : (currentOperand += input);
+        if (input === ".") {
+          currentOperand = "0.";
+          digitCount = 2;
+        } else {
+          currentOperand = input;
+          digitCount = 1;
+        }
       }
     } else {
-      if (input === ".") {
-        input = "0.";
-      }
-      currentOperand = input;
+      return;
     }
 
-    updateData(currentOperand, digitCount + 1);
+    updateData(currentOperand, digitCount);
     displayNumber(currentOperand);
   }
 
@@ -106,7 +111,7 @@
     if (args[1] !== undefined) {
       data.digitCount = args[1];
     }
-    console.log(data);
+    console.log(data); // REMOVE
   }
 
   function handleOperatorKey(input) {
@@ -117,7 +122,6 @@
       if (!operand1) {
         operand1 = displayContent;
         operator = input;
-        displayContent = "";
       }
       if (operand2 !== null && operator) {
         operand2 = displayContent;
@@ -176,7 +180,7 @@
 
     if (operandLength < 2 || (operandLength === 2 && current[0] === "-")) {
       current = "0";
-      digitCount = 0;
+      digitCount = 1;
     } else {
       current = current.slice(0, operandLength - 1);
       digitCount -= 1;
@@ -206,6 +210,7 @@
     };
     data.currentOperand = null;
     data.digitCount = 0;
+    console.log(data); // REMOVE
   }
 
   function setDataValues(displayContent, operand1, operand2, operator) {
@@ -215,6 +220,7 @@
       operand2,
       operator
     };
+    data.currentOperand = null;
     data.digitCount = 0;
   }
 
