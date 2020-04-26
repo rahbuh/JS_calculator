@@ -1,4 +1,4 @@
-(function() {
+(function () {
   const data = {
     display: document.querySelector("#display"),
     calculation: {
@@ -8,7 +8,7 @@
     },
     currentOperand: null,
     memory: 0,
-    digitCount: 0
+    digitCount: 0,
   };
 
   // TEST IF DISPLAYING ON MOBILE DEVICE
@@ -29,7 +29,7 @@
 
   function addListener(keyType, fn) {
     for (let key of document.getElementsByClassName(keyType)) {
-      key.addEventListener("click", e => {
+      key.addEventListener("click", (e) => {
         if (!isMobileDevice()) {
           keyAnimation(e.target);
         }
@@ -111,31 +111,28 @@
     if (args[1] !== undefined) {
       data.digitCount = args[1];
     }
-    console.log(data); // REMOVE
   }
 
   function handleOperatorKey(input) {
     let { operand1, operand2, operator } = data.calculation;
-    let displayContent = data.display.textContent;
+    let workingOperand = data.display.textContent;
 
-    if (operator !== "=") {
-      if (!operand1) {
-        operand1 = displayContent;
-        operator = input;
+    if (input !== "Enter") {
+      if (operand1 === null) {
+        operand1 = workingOperand;
+      } else if (operand2 === null && operator) {
+        operand2 = workingOperand;
+        operand1 = runCalculation(operand1, operand2, operator);
       }
-      if (operand2 !== null && operator) {
-        operand2 = displayContent;
-        operand1 = displayContent = runCalculation(
-          operand1,
-          operand2,
-          operator
-        );
-        operator = input;
-      }
-      setDataValues(displayContent, operand1, operand2, operator);
-      console.log(data.calculation);
+      setDataValues(operand1, null, input);
     } else {
-      console.log("equals");
+      if (operand1 && operator) {
+        if (!operand2) {
+          operand2 = workingOperand;
+        }
+        operand1 = runCalculation(operand1, operand2, operator);
+        setDataValues(operand1, operand2, operator);
+      } 
     }
   }
 
@@ -154,25 +151,25 @@
   }
 
   function handleMemoryKey(input) {
-    let displayContent = data.display.textContent;
+    let workingOperand = data.display.textContent;
     let memory = data.memory;
     if (input === "mem-clear") {
       memory = 0;
     }
     if (input === "mem-recall") {
-      displayContent = String(memory);
+      workingOperand = String(memory);
     }
-    if (input === "mem-plus") {
-      memory += parseFloat(displayContent);
+    if (input === "mem-add") {
+      memory += parseFloat(workingOperand);
       // fix calculation
     }
-    if (input === "mem-minus") {
-      memory -= parseFloat(displayContent);
+    if (input === "mem-subtract") {
+      memory -= parseFloat(workingOperand);
       // fix calculation
     }
 
     data.memory = memory;
-    data.display.textContent = displayContent;
+    data.display.textContent = workingOperand;
   }
 
   function backspace(current, digitCount) {
@@ -206,27 +203,43 @@
     data.calculation = {
       operand1: null,
       operand2: null,
-      operator: null
+      operator: null,
     };
     data.currentOperand = null;
     data.digitCount = 0;
-    console.log(data); // REMOVE
   }
 
-  function setDataValues(displayContent, operand1, operand2, operator) {
-    data.display.textContent = displayContent;
+  function setDataValues(operand1, operand2, operator) {
+    data.display.textContent = operand1;
     data.calculation = {
       operand1,
       operand2,
-      operator
+      operator,
     };
     data.currentOperand = null;
     data.digitCount = 0;
+
+    console.log({ operand1, operand2, operator });
   }
 
   function runCalculation(operand1, operand2, operator) {
-    console.log({ operand1, operand2, operator });
-    return 42;
+    let result;
+
+    switch (operator) {
+      case "+":
+        result = calculate.add(operand1, operand2);
+        break;
+      case "-":
+        result = calculate.sub(operand1, operand2);
+        break;
+      case "*":
+        result = calculate.multiply(operand1, operand2);
+        break;
+      case "/":
+        result = calculate.divide(operand1, operand2);
+        break;
+    }
+    return result;
   }
 
   initEventListeners();

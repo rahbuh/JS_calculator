@@ -2,8 +2,8 @@
   const calculator = [
     { classInfo: "key single memory", dataKeyInfo: "mem-clear", text: "MC" },
     { classInfo: "key single memory", dataKeyInfo: "mem-recall", text: "MR" },
-    { classInfo: "key single memory", dataKeyInfo: "mem-plus", text: "M+" },
-    { classInfo: "key single memory", dataKeyInfo: "mem-minus", text: "M-" },
+    { classInfo: "key single memory", dataKeyInfo: "mem-add", text: "M+" },
+    { classInfo: "key single memory", dataKeyInfo: "mem-subtract", text: "M-" },
     { classInfo: "key single number", dataKeyInfo: "7", text: "7" },
     { classInfo: "key single number", dataKeyInfo: "8", text: "8" },
     { classInfo: "key single number", dataKeyInfo: "9", text: "9" },
