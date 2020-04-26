@@ -124,14 +124,14 @@
         operand2 = workingOperand;
         operand1 = runCalculation(operand1, operand2, operator);
       }
-      setDataValues(operand1, null, input);
+      setDataValues(operand1, null, input, operand1);
     } else {
       if (operand1 && operator) {
         if (!operand2) {
           operand2 = workingOperand;
         }
         operand1 = runCalculation(operand1, operand2, operator);
-        setDataValues(operand1, operand2, operator);
+        setDataValues(operand1, operand2, operator, operand1);
       } 
     }
   }
@@ -146,7 +146,7 @@
       negate(currentOperand);
     }
     if (input === "Delete") {
-      resetDataValues();
+      setDataValues(null, null, null, "0")
     }
   }
 
@@ -154,20 +154,19 @@
     let workingOperand = data.display.textContent;
     let memory = data.memory;
     if (input === "mem-clear") {
-      memory = 0;
+      memory = "0";
     }
     if (input === "mem-recall") {
-      workingOperand = String(memory);
+      workingOperand = memory;
     }
     if (input === "mem-add") {
-      memory += parseFloat(workingOperand);
-      // fix calculation
+      memory = calculate.add(memory, workingOperand);
     }
     if (input === "mem-subtract") {
-      memory -= parseFloat(workingOperand);
-      // fix calculation
+      memory = calculate.sub(memory, workingOperand);
     }
 
+    data.currentOperand = null;
     data.memory = memory;
     data.display.textContent = workingOperand;
   }
@@ -198,19 +197,8 @@
     }
   }
 
-  function resetDataValues() {
-    data.display.textContent = 0;
-    data.calculation = {
-      operand1: null,
-      operand2: null,
-      operator: null,
-    };
-    data.currentOperand = null;
-    data.digitCount = 0;
-  }
-
-  function setDataValues(operand1, operand2, operator) {
-    data.display.textContent = operand1;
+  function setDataValues(operand1, operand2, operator, display) {
+    data.display.textContent = display;
     data.calculation = {
       operand1,
       operand2,
