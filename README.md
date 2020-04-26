@@ -1,6 +1,6 @@
 # JavaScript Calculator
 
-You can see it in action [here](https://rahbuhkeh.dev/JS_calculator/)
+You can see it in action [here](https://robkramer.dev/JS_calculator/)
 
 <img src="./readme-images/screenshot.PNG">
 
